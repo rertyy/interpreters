@@ -50,9 +50,9 @@ private:
 
     void identifier();
 
-    bool isAlpha(char c);
+    static bool isAlpha(char c);
 
-    bool isAlphaNumeric(char c);
+    static bool isAlphaNumeric(char c);
 
     void lineComment();
 

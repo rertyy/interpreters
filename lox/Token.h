@@ -11,14 +11,6 @@ class Token {
 public:
     Token(TokenType type, std::string lexeme, std::any literal, int line);
 
-    TokenType getType() const;
-
-    std::string getLexeme() const;
-
-    std::any getLiteral() const;
-
-    int getLine() const;
-
     std::string toString() const;
 
     // Friend declaration for operator<<

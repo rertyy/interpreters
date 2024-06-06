@@ -41,7 +41,7 @@ const std::unordered_map<int, std::string> tokenTypeMap = {
         {35, "TRUE"},
         {36, "VAR"},
         {37, "WHILE"},
-        {38, "EOFTOKEN"}
+        {38, "EOF_TOKEN"}
 };
 
 std::string tokenTypeToString(TokenType type) {

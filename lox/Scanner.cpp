@@ -39,7 +39,7 @@ std::vector<Token> Scanner::scanTokens() {
         scanToken();
     }
 
-    tokens.emplace_back(EOFTOKEN, "", nullptr, line);
+    tokens.emplace_back(EOF_TOKEN, "", nullptr, line);
     return tokens;
 }
 
@@ -89,13 +89,10 @@ void Scanner::scanToken() {
             addToken(match('=') ? GREATER_EQUAL : GREATER);
             break;
         case '/':
-            if (peek() == '/') lineComment();
-            else if (peek() == '*') multilineComment();
+            if (match('/')) lineComment();
+            else if (match('*')) multilineComment();
             else addToken(SLASH);
-
             break;
-
-
         case ' ':
         case '\r':
         case '\t':
@@ -157,7 +154,7 @@ void Scanner::string() {
         return;
     }
 
-    // The closing ".
+    // The closing quotation mark.
     advance();
 
     // Trim the surrounding quotes.
@@ -211,14 +208,11 @@ bool Scanner::isAlphaNumeric(char c) {
 }
 
 void Scanner::lineComment() {
-    advance();
     // A comment goes until the end of the line.
     while (peek() != '\n' && !isAtEnd()) advance();
 }
 
 void Scanner::multilineComment() {
-    advance();
-    // Multi-line comment
     while (!isAtEnd()) {
         if (peek() == '*' && peekNext() == '/') {
             advance();
@@ -228,10 +222,6 @@ void Scanner::multilineComment() {
         if (peek() == '\n') ++line;
         advance();
     }
-    if (isAtEnd()) {
-        Lox::error(line, "Unterminated comment.");
-    }
-
 }
 
 
