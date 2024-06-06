@@ -1,6 +1,10 @@
 #ifndef INTERPRETERS_TOKENTYPE_H
 #define INTERPRETERS_TOKENTYPE_H
 
+#include <unordered_map>
+#include <string>
+
+
 enum class TokenType {
     // Single-character tokens.
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -19,8 +23,11 @@ enum class TokenType {
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
 
-    EOF
+    EOFTOKEN
+
 };
+
+std::string tokenTypeToString(TokenType type);
 
 
 #endif //INTERPRETERS_TOKENTYPE_H

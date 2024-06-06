@@ -22,7 +22,7 @@ public:
     std::string toString() const;
 
     // Friend declaration for operator<<
-    friend std::ostream &operator<<(std::ostream &os, const Token &token);
+//    friend std::ostream &operator<<(std::ostream &os, const Token &token);
 
 private:
     const TokenType type;

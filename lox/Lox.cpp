@@ -5,6 +5,7 @@
 #include <vector>
 #include "Token.h"
 #include "Lox.h"
+#include "Scanner.h"
 
 // This can alternatively be declared within Lox.h as `inline static bool`
 bool Lox::hadError = false;
@@ -46,11 +47,10 @@ void Lox::runPrompt() {
 }
 
 void Lox::run(const std::string &source) {
-    Scanner scanner(source);
+    Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
-
     for (const auto &token: tokens) {
-        std::cout << token << std::endl;
+        std::cout << token.toString() << std::endl;
     }
 }
 

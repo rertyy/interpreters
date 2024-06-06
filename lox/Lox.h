@@ -18,6 +18,7 @@ public:
     static void error(int line, const std::string &message);
 
     static void report(int line, const std::string &where, const std::string &message);
+
 };
 
 #endif //INTERPRETERS_LOX_H

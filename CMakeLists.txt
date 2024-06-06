@@ -13,4 +13,5 @@ add_executable(interpreters
         lox/Scanner.cpp
         lox/Scanner.h
         lox/Scanner.cpp
+        lox/TokenType.cpp
 )
