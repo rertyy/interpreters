@@ -2,16 +2,18 @@
 #include "Lox.h"
 
 #include <utility>
-using enum TokenType;
+
+using
+enum TokenType;
 
 Scanner::Scanner(std::string source) : source(std::move(source)) {}
 
-const std::unordered_map<std::string , TokenType> Scanner::keywords {
-        {"and",   AND},
-        {"class", CLASS},
-        {"else", ELSE},
-        {"false", FALSE},
-        {"for", FOR},
+const std::unordered_map<std::string, TokenType> Scanner::keywords{
+        {"and",    AND},
+        {"class",  CLASS},
+        {"else",   ELSE},
+        {"false",  FALSE},
+        {"for",    FOR},
         {"fun",    FUN},
         {"if",     IF},
         {"nil",    NIL},
@@ -87,22 +89,24 @@ void Scanner::scanToken() {
             addToken(match('=') ? GREATER_EQUAL : GREATER);
             break;
         case '/':
-            if (match('/')) {
-                // A comment goes until the end of the line.
-                while (peek() != '\n' && !isAtEnd()) advance();
-            } else {
-                addToken(SLASH);
-            }
+            if (peek() == '/') lineComment();
+            else if (peek() == '*') multilineComment();
+            else addToken(SLASH);
+
             break;
+
+
         case ' ':
         case '\r':
         case '\t':
             // Ignore whitespace.
             break;
         case '\n':
-            line++;
+            ++line;
             break;
-        case '"': string(); break;
+        case '"':
+            string();
+            break;
         default:
             if (isDigit(c)) {
                 number();
@@ -133,7 +137,7 @@ bool Scanner::match(char expected) {
     if (isAtEnd()) return false;
     if (source[current] != expected) return false;
 
-    current++;
+    ++current;
     return true;
 }
 
@@ -144,7 +148,7 @@ char Scanner::peek() {
 
 void Scanner::string() {
     while (peek() != '"' && !isAtEnd()) {
-        if (peek() == '\n') line++;
+        if (peek() == '\n') ++line;
         advance();
     }
 
@@ -182,7 +186,7 @@ void Scanner::number() {
 
 char Scanner::peekNext() {
     if (current + 1 >= source.length()) return '\0';
-    return source[(current + 1)];
+    return source[current + 1];
 }
 
 void Scanner::identifier() {
@@ -204,6 +208,30 @@ bool Scanner::isAlpha(char c) {
 
 bool Scanner::isAlphaNumeric(char c) {
     return isAlpha(c) || isDigit(c);
+}
+
+void Scanner::lineComment() {
+    advance();
+    // A comment goes until the end of the line.
+    while (peek() != '\n' && !isAtEnd()) advance();
+}
+
+void Scanner::multilineComment() {
+    advance();
+    // Multi-line comment
+    while (!isAtEnd()) {
+        if (peek() == '*' && peekNext() == '/') {
+            advance();
+            advance();
+            break;
+        }
+        if (peek() == '\n') ++line;
+        advance();
+    }
+    if (isAtEnd()) {
+        Lox::error(line, "Unterminated comment.");
+    }
+
 }
 
 

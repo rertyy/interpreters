@@ -54,6 +54,10 @@ private:
 
     bool isAlphaNumeric(char c);
 
+    void lineComment();
+
+    void multilineComment();
+
 };
 
 
