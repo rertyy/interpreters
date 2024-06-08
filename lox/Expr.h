@@ -58,9 +58,9 @@ public:
 template<typename T>
 class Literal : public Expr<T> {
 public:
-    explicit Literal(std::any value) : value(std::move(value)) {}
+    explicit Literal(T value) : value(std::move(value)) {}
 
-    std::any value;
+    T value;
 
     T accept(Visitor<T> &visitor) const override;
 };
