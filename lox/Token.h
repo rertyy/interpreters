@@ -11,7 +11,7 @@ class Token {
 public:
     Token(TokenType type, std::string lexeme, std::any literal, int line);
 
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     // Friend declaration for operator<<
 //    friend std::ostream &operator<<(std::ostream &os, const Token &token);

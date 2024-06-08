@@ -14,4 +14,12 @@ add_executable(interpreters
         lox/Scanner.h
         lox/Scanner.cpp
         lox/TokenType.cpp
+        tool/GenerateAST.cpp
+        tool/GenerateAST.h
+        tool/GenerateAST.h
+        utils/utils.cpp
+        utils/utils.h
+        utils/utils.h
+        lox/Expr.h
+        lox/Expr.cpp
 )
