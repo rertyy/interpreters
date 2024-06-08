@@ -16,7 +16,7 @@ void GenerateAST::main(int argc, char **argv) {
     defineAST(outputDir, "Expr", {
             "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
             "Grouping : std::shared_ptr<Expr> expression",
-            "Literal  : std::any value",
+            "Literal  : std::string value",
             "Unary    : Token op, std::shared_ptr<Expr> right"
     });
 }
@@ -38,13 +38,11 @@ void GenerateAST::defineAST(const std::string &outputDir, const std::string &bas
 
 
     defineASTHeader(outputDir, baseName, typesVec, baseNameUpper);
-    defineASTCode(outputDir, baseName, typesVec, baseNameUpper);
+    defineASTCode(outputDir, baseName, typesVec);
 }
 
-
 void GenerateAST::defineASTCode(const std::string &outputDir, const std::string &baseName,
-                                const std::vector<std::pair<std::string, std::string>> &typesVec,
-                                const std::string &baseNameUpper) {
+                                const std::vector<std::pair<std::string, std::string>> &typesVec) {
     std::string path = outputDir + "/" + baseName + ".cpp";
     std::ofstream writer(path);
     if (!writer.is_open()) {
@@ -59,7 +57,7 @@ void GenerateAST::defineASTCode(const std::string &outputDir, const std::string 
     writer << std::endl;
 
     for (const auto &[className, fields]: typesVec) {
-        writer << "std::any " << className << "::accept(Visitor &visitor) {" << std::endl;
+        writer << "std::string " << className << "::accept(Visitor &visitor) {" << std::endl;
         writer << "    return visitor.visit" << className << baseName << "(*this);" << std::endl;
         writer << "}" << std::endl;
         writer << std::endl;
@@ -128,7 +126,7 @@ void GenerateAST::defineBaseClass(std::ofstream &hWriter, const std::string &bas
     hWriter << "class " << baseName << " {" << std::endl;
     hWriter << "public:" << std::endl;
     hWriter << "    virtual ~" << baseName << "() = default;" << std::endl;
-    hWriter << "    virtual std::any accept(Visitor &visitor) = 0;" << std::endl;
+    hWriter << "    virtual std::string accept(Visitor &visitor) const = 0;" << std::endl;
     hWriter << "};" << std::endl;
     hWriter << std::endl;
 }
@@ -139,7 +137,7 @@ GenerateAST::defineVisitor(std::ofstream &writer, const std::string &baseName,
     writer << "class Visitor {" << std::endl;
     writer << "public:" << std::endl;
     for (const auto &[className, fieldName]: typesVec) {
-        writer << "    virtual std::any visit" << className << baseName << "(const " << className << " &expr) = 0;"
+        writer << "    virtual std::string visit" << className << baseName << "(const " << className << " &expr) = 0;"
                << std::endl;
     }
     writer << "};" << std::endl;
@@ -159,7 +157,7 @@ void GenerateAST::defineType(std::ofstream &writer, const std::string &baseName,
     writer << "public:" << std::endl;
 
     // Constructor
-    writer << "    " << className << "(" << fields << ") : ";
+    writer << "    explicit " << className << "(" << fields << ") : ";
     std::vector<std::string> fieldsVec = split(fields, ", ");
     for (size_t i = 0; i < fieldsVec.size(); ++i) {
         std::string fieldName = split(fieldsVec[i], " ").back();
@@ -177,7 +175,9 @@ void GenerateAST::defineType(std::ofstream &writer, const std::string &baseName,
     }
 
     writer << std::endl;
-    writer << "    std::any accept(Visitor &visitor) override;" << std::endl;
+    writer << "    std::string accept(Visitor &visitor) override;" << std::endl;
     writer << "};" << std::endl;
     writer << std::endl;
 }
+
+

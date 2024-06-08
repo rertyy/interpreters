@@ -22,4 +22,8 @@ add_executable(interpreters
         utils/utils.h
         lox/Expr.h
         lox/Expr.cpp
+        lox/AstPrinter.cpp
+        lox/AstPrinter.h
+        lox/AstPrinter.h
+        lox/AstPrinter.h
 )
