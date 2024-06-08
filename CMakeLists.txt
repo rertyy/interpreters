@@ -6,24 +6,24 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(interpreters
         lox/Lox.cpp
         lox/Token.cpp
-        lox/Token.h
-        lox/TokenType.h
-        lox/Lox.h
+        include/lox/Token.h
+        include/lox/TokenType.h
+        include/lox/Lox.h
         main.cpp
         lox/Scanner.cpp
-        lox/Scanner.h
+        include/lox/Scanner.h
         lox/Scanner.cpp
         lox/TokenType.cpp
         tool/GenerateAST.cpp
-        tool/GenerateAST.h
-        tool/GenerateAST.h
+        include/tool/GenerateAST.h
+        include/tool/GenerateAST.h
         utils/utils.cpp
-        utils/utils.h
-        utils/utils.h
-        lox/Expr.h
+        include/utils/utils.h
+        include/utils/utils.h
+        include/lox/Expr.h
         lox/Expr.cpp
         lox/AstPrinter.cpp
-        lox/AstPrinter.h
-        lox/AstPrinter.h
-        lox/AstPrinter.h
+        include/lox/AstPrinter.h
+        include/lox/AstPrinter.h
+        include/lox/AstPrinter.h
 )

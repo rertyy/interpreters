@@ -1,5 +1,5 @@
-#include "Scanner.h"
-#include "Lox.h"
+#include "../include/lox/Scanner.h"
+#include "../include/lox/Lox.h"
 
 #include <utility>
 

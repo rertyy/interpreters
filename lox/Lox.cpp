@@ -3,9 +3,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Token.h"
-#include "Lox.h"
-#include "Scanner.h"
+#include "../include/lox/Token.h"
+#include "../include/lox/Lox.h"
+#include "../include/lox/Scanner.h"
 
 // This can alternatively be declared within Lox.h as `inline static bool`
 bool Lox::hadError = false;

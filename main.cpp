@@ -1,8 +1,8 @@
 #include <memory>
-#include "lox/Lox.h"
-#include "tool/GenerateAST.h"
-#include "lox/Expr.h"
-#include "lox/AstPrinter.h"
+#include "include/lox/Lox.h"
+#include "include/tool/GenerateAST.h"
+#include "include/lox/Expr.h"
+#include "include/lox/AstPrinter.h"
 
 
 int testAst() {
@@ -10,7 +10,7 @@ int testAst() {
     std::shared_ptr<Expr> expression = std::make_shared<Binary>(
             std::make_shared<Unary>(
                     Token(TokenType::MINUS, "-", std::any(), 1),
-                    std::make_shared<Literal>(123)),
+                    std::make_shared<Literal>("123")),
             Token(TokenType::STAR, "*", std::any(), 1),
             std::make_shared<Grouping>(
                     std::make_shared<Literal>("45.67")));

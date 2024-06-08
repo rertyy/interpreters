@@ -1,9 +1,9 @@
 
 
-#include "AstPrinter.h"
+#include "../include/lox/AstPrinter.h"
 #include <string>
 #include <iostream>
-#include "Expr.h"
+#include "../include/lox/Expr.h"
 
 
 std::string AstPrinter::print(Expr &expr) {

@@ -1,7 +1,6 @@
 #ifndef INTERPRETERS_UTILS_H
 #define INTERPRETERS_UTILS_H
 
-#include <iostream>
 #include <vector>
 #include <string>
 

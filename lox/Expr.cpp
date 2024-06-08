@@ -1,5 +1,5 @@
 #include <any>
-#include "Expr.h"
+#include "../include/lox/Expr.h"
 
 std::string Binary::accept(Visitor &visitor) {
     return visitor.visitBinaryExpr(*this);

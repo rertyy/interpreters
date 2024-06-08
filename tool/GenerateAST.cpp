@@ -1,5 +1,5 @@
-#include "GenerateAST.h"
-#include "../utils/utils.h"
+#include "../include/tool/GenerateAST.h"
+#include "../include/utils/utils.h"
 
 #include <fstream>
 #include <iostream>

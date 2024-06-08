@@ -1,4 +1,4 @@
-#include "TokenType.h"
+#include "../include/lox/TokenType.h"
 #include <unordered_map>
 #include <string>
 
