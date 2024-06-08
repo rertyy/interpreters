@@ -1,19 +1,23 @@
 #include <any>
 #include "Expr.h"
 
-std::any Binary::accept(Visitor &visitor) {
+template<typename T>
+T Binary<T>::accept(Visitor<T> &visitor) const {
     return visitor.visitBinaryExpr(*this);
 }
 
-std::any Grouping::accept(Visitor &visitor) {
+template<typename T>
+T Grouping<T>::accept(Visitor<T> &visitor) const {
     return visitor.visitGroupingExpr(*this);
 }
 
-std::any Literal::accept(Visitor &visitor) {
+template<typename T>
+T Literal<T>::accept(Visitor<T> &visitor) const {
     return visitor.visitLiteralExpr(*this);
 }
 
-std::any Unary::accept(Visitor &visitor) {
+template<typename T>
+T Unary<T>::accept(Visitor<T> &visitor) const {
     return visitor.visitUnaryExpr(*this);
 }
 

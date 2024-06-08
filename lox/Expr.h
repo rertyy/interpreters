@@ -5,63 +5,75 @@
 #include <memory>
 #include "Token.h"
 
+template<typename T>
 class Visitor;
+template<typename T>
 class Binary;
+template<typename T>
 class Grouping;
+template<typename T>
 class Literal;
+template<typename T>
 class Unary;
 
+template<typename T>
 class Expr {
 public:
     virtual ~Expr() = default;
-    virtual std::any accept(Visitor &visitor) = 0;
+    virtual T accept(Visitor<T> &visitor) const = 0;
 };
 
+template<typename T>
 class Visitor {
 public:
-    virtual std::any visitBinaryExpr(const Binary &expr) = 0;
-    virtual std::any visitGroupingExpr(const Grouping &expr) = 0;
-    virtual std::any visitLiteralExpr(const Literal &expr) = 0;
-    virtual std::any visitUnaryExpr(const Unary &expr) = 0;
+    virtual T visitBinaryExpr(const Binary<T> &expr) const = 0;
+    virtual T visitGroupingExpr(const Grouping<T> &expr) const = 0;
+    virtual T visitLiteralExpr(const Literal<T> &expr) const = 0;
+    virtual T visitUnaryExpr(const Unary<T> &expr) const = 0;
+friend class Expr<T>;
 };
 
-class Binary : public Expr {
+template<typename T>
+class Binary : public Expr<T> {
 public:
-    Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left(std::move(left)), op(std::move(op)), right(std::move(right)) {}
+    explicit Binary(std::shared_ptr<Expr<T>> left, Token op, std::shared_ptr<Expr<T>> right) : left(std::move(left)), op(std::move(op)), right(std::move(right)) {}
 
-    std::shared_ptr<Expr> left;
+    std::shared_ptr<Expr<T>> left;
     Token op;
-    std::shared_ptr<Expr> right;
+    std::shared_ptr<Expr<T>> right;
 
-    std::any accept(Visitor &visitor) override;
+    T accept(Visitor<T> &visitor) const override;
 };
 
-class Grouping : public Expr {
+template<typename T>
+class Grouping : public Expr<T> {
 public:
-    Grouping(std::shared_ptr<Expr> expression) : expression(std::move(expression)) {}
+    explicit Grouping(std::shared_ptr<Expr<T>> expression) : expression(std::move(expression)) {}
 
-    std::shared_ptr<Expr> expression;
+    std::shared_ptr<Expr<T>> expression;
 
-    std::any accept(Visitor &visitor) override;
+    T accept(Visitor<T> &visitor) const override;
 };
 
-class Literal : public Expr {
+template<typename T>
+class Literal : public Expr<T> {
 public:
-    Literal(std::any value) : value(std::move(value)) {}
+    explicit Literal(std::any value) : value(std::move(value)) {}
 
     std::any value;
 
-    std::any accept(Visitor &visitor) override;
+    T accept(Visitor<T> &visitor) const override;
 };
 
-class Unary : public Expr {
+template<typename T>
+class Unary : public Expr<T> {
 public:
-    Unary(Token op, std::shared_ptr<Expr> right) : op(std::move(op)), right(std::move(right)) {}
+    explicit Unary(Token op, std::shared_ptr<Expr<T>> right) : op(std::move(op)), right(std::move(right)) {}
 
     Token op;
-    std::shared_ptr<Expr> right;
+    std::shared_ptr<Expr<T>> right;
 
-    std::any accept(Visitor &visitor) override;
+    T accept(Visitor<T> &visitor) const override;
 };
 
 #endif //INTERPRETERS_EXPR_H

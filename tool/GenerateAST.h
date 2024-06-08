@@ -27,21 +27,20 @@ private:
                               const std::vector<std::pair<std::string, std::string>> &typesVec);
 
     static void defineASTCode(const std::string &outputDir, const std::string &baseName,
-                              const std::vector<std::pair<std::string, std::string>> &typesVec,
-                              const std::string &baseNameUpper);
+                              const std::vector<std::pair<std::string, std::string>> &typesVec);
 
     static void defineASTHeader(const std::string &outputDir, const std::string &baseName,
                                 const std::vector<std::pair<std::string, std::string>> &typesVec,
                                 const std::string &baseNameUpper);
 
-    static void defineBaseClass(std::ofstream &hWriter, const std::string &baseName);
+    static void defineBaseClass(std::ofstream &writer, const std::string &baseName);
 
     static void
     defineSubclasses(std::ofstream &hWriter, const std::string &baseName,
                      const std::vector<std::pair<std::string, std::string>> &typesVec);
 
     static void
-    defineForwardDecls(std::ofstream &hWriter,
+    defineForwardDecls(std::ofstream &writer,
                        const std::vector<std::pair<std::string, std::string>> &typesVec);
 };
 
