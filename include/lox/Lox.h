@@ -2,6 +2,7 @@
 #define INTERPRETERS_LOX_H
 
 #include <string>
+#include "Token.h"
 
 class Lox {
 public:
@@ -16,6 +17,8 @@ public:
     static void run(const std::string &source);
 
     static void error(int line, const std::string &message);
+
+    static void error(Token &token, const std::string &message);
 
     static void report(int line, const std::string &where, const std::string &message);
 

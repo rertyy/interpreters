@@ -1,3 +1,4 @@
-Copying(?) https://craftinginterpreters.com/
+Slowly going through Crafting Interpreters
+https://craftinginterpreters.com/
 
-Learning CPP rather
+WIP

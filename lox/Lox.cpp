@@ -62,3 +62,12 @@ void Lox::report(int line, const std::string &where, const std::string &message)
     std::cerr << "[line " << line << "] Error" << where << ": " << message << std::endl;
 }
 
+void Lox::error(Token &token, const std::string &message) {
+    if (token.type == TokenType::EOF_TOKEN) {
+        report(token.line, " at end", message);
+    } else {
+        report(token.line, " at '" + token.lexeme + "'", message);
+    }
+
+}
+
