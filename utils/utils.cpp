@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 
 std::vector<std::string> split(const std::string &str, const std::string &delimiter) {
@@ -32,4 +33,26 @@ std::string rtrim(const std::string &s) {
 
 std::string trim(const std::string &s) {
     return rtrim(ltrim(s));
+}
+
+std::string castAnyToString(const std::any &value) {
+    if (!value.has_value()) {
+        throw std::runtime_error("std::any is empty");
+    }
+
+    if (value.type() == typeid(std::string)) {
+        return std::any_cast<std::string>(value);
+    } else if (value.type() == typeid(const char *)) {
+        return {std::any_cast<const char *>(value)};
+    } else if (value.type() == typeid(char)) {
+        return {1, std::any_cast<char>(value)};
+    } else if (value.type() == typeid(int)) {
+        return std::to_string(std::any_cast<int>(value));
+    } else if (value.type() == typeid(float)) {
+        return std::to_string(std::any_cast<float>(value));
+    } else if (value.type() == typeid(double)) {
+        return std::to_string(std::any_cast<double>(value));
+    } else {
+        throw std::runtime_error("Failed to cast std::any to std::string or const char*");
+    }
 }

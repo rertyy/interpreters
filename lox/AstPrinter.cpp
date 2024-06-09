@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "../include/lox/Expr.h"
+#include "../include/utils/utils.h"
 
 
 std::string AstPrinter::print(Expr &expr) {
@@ -20,7 +21,7 @@ std::string AstPrinter::visitGroupingExpr(Grouping &expr) {
 
 std::string AstPrinter::visitLiteralExpr(Literal &expr) {
     try {
-        return std::any_cast<std::string>(expr.value);
+        return castAnyToString(expr.value);
     } catch (const std::bad_any_cast &e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
