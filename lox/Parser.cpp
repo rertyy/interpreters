@@ -38,7 +38,18 @@ Token &Parser::previous() {
 
 // Start
 std::shared_ptr<Expr> Parser::expression() {
-    return equality();
+    return sequence();
+}
+
+std::shared_ptr<Expr> Parser::sequence() {
+    std::shared_ptr<Expr> expr = equality();
+
+    while (match({COMMA})) {
+        Token &op = previous();
+        std::shared_ptr<Expr> right = equality();
+        expr = std::make_shared<Binary>(expr, op, right);
+    }
+    return expr;
 }
 
 // Binary functions

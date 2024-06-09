@@ -65,6 +65,7 @@ private:
     // Checks until statement boundary before synchronizing state for error handling
     void synchronize();
 
+    std::shared_ptr<Expr> sequence();
 };
 
 
