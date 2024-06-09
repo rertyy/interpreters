@@ -32,7 +32,7 @@ int codegen() {
 
 int main(int argc, char *argv[]) {
 //    codegen();
-    testAst();
-//    Lox::main(argc, argv);
+//    testAst();
+    Lox::main(argc, argv);
     return 0;
 }

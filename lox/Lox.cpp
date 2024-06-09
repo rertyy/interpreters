@@ -6,6 +6,8 @@
 #include "../include/lox/Token.h"
 #include "../include/lox/Lox.h"
 #include "../include/lox/Scanner.h"
+#include "../include/lox/Parser.h"
+#include "../include/lox/AstPrinter.h"
 
 // This can alternatively be declared within Lox.h as `inline static bool`
 bool Lox::hadError = false;
@@ -49,9 +51,13 @@ void Lox::runPrompt() {
 void Lox::run(const std::string &source) {
     Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
-    for (const auto &token: tokens) {
-        std::cout << token.toString() << std::endl;
-    }
+
+    Parser parser{tokens};
+    std::shared_ptr<Expr> expression = parser.parse();
+    if (hadError) return;
+
+    AstPrinter printer;
+    std::cout << printer.print(*expression) << std::endl;
 }
 
 void Lox::error(int line, const std::string &message) {

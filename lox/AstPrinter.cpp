@@ -8,7 +8,7 @@
 
 
 std::string AstPrinter::print(Expr &expr) {
-    return std::any_cast<std::string>(expr.accept(*this));
+    return expr.accept(*this);
 }
 
 std::string AstPrinter::visitBinaryExpr(Binary &expr) {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <iostream>
 
 
 std::vector<std::string> split(const std::string &str, const std::string &delimiter) {
@@ -37,7 +38,8 @@ std::string trim(const std::string &s) {
 
 std::string castAnyToString(const std::any &value) {
     if (!value.has_value()) {
-        throw std::runtime_error("std::any is empty");
+        std::cerr << "Failed to cast empty value to string" << std::endl;
+        return {};
     }
 
     if (value.type() == typeid(std::string)) {
@@ -52,7 +54,19 @@ std::string castAnyToString(const std::any &value) {
         return std::to_string(std::any_cast<float>(value));
     } else if (value.type() == typeid(double)) {
         return std::to_string(std::any_cast<double>(value));
+    } else if (value.type() == typeid(bool)) {
+        return std::any_cast<bool>(value) ? "true" : "false";
+    } else if (value.type() == typeid(long)) {
+        return std::to_string(std::any_cast<long>(value));
+    } else if (value.type() == typeid(unsigned int)) {
+        return std::to_string(std::any_cast<unsigned int>(value));
+    } else if (value.type() == typeid(unsigned long)) {
+        return std::to_string(std::any_cast<unsigned long>(value));
+    } else if (value.type() == typeid(std::vector<char>)) {
+        auto charVec = std::any_cast<std::vector<char>>(value);
+        return {charVec.begin(), charVec.end()};
     } else {
-        throw std::runtime_error("Failed to cast std::any to std::string or const char*");
+        std::cerr << "Failed to cast type " << value.type().name() << " to string" << std::endl;
+        return {};
     }
 }

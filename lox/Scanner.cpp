@@ -2,6 +2,7 @@
 #include "../include/lox/Lox.h"
 
 #include <utility>
+#include <iostream>
 
 using
 enum TokenType;

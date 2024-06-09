@@ -35,9 +35,8 @@ public:
 
 class Binary : public Expr {
 public:
-    explicit Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left(std::move(left)),
-                                                                                         op(std::move(op)),
-                                                                                         right(std::move(right)) {}
+    explicit Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right)
+            : left(std::move(left)), op(std::move(op)), right(std::move(right)) {}
 
     std::shared_ptr<Expr> left;
     Token op;

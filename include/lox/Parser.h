@@ -5,10 +5,10 @@
 #include <memory>
 #include <algorithm>
 #include <valarray>
-#include "../include/lox/Token.h"
-#include "../include/lox/TokenType.h"
-#include "../include/lox/Expr.h"
-#include "../include/lox/Lox.h"
+#include "Token.h"
+#include "TokenType.h"
+#include "Expr.h"
+#include "Lox.h"
 
 using
 enum TokenType;
@@ -19,11 +19,11 @@ public:
 
     class ParseError : public std::runtime_error {
     public:
-        ParseError();
-
-        explicit ParseError(const std::string &arg);
+        ParseError() : std::runtime_error("Parse error") {}
     };
 
+
+    std::shared_ptr<Expr> parse();
 
 private:
     std::vector<Token> tokens;
@@ -65,7 +65,6 @@ private:
     // Checks until statement boundary before synchronizing state for error handling
     void synchronize();
 
-    std::shared_ptr<Expr> parse();
 };
 
 

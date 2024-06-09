@@ -1,12 +1,5 @@
-#include "Parser.h"
-
-Parser::ParseError::ParseError(const std::string &arg) : runtime_error(arg) {
-
-}
-
-Parser::ParseError::ParseError() : runtime_error("ParserError") {
-
-}
+#include <iostream>
+#include "../include/lox/Parser.h"
 
 
 bool Parser::match(const std::vector<TokenType> &types) {
@@ -155,7 +148,8 @@ void Parser::synchronize() {
 std::shared_ptr<Expr> Parser::parse() {
     try {
         return expression();
-    } catch (const ParseError &error) {
+    } catch (ParseError &error) {
+        Lox::hadError = true;
         return nullptr;
     }
 }
