@@ -11,6 +11,8 @@
 
 // This can alternatively be declared within Lox.h as `inline static bool`
 bool Lox::hadError = false;
+bool Lox::hadRuntimeError = false;
+Interpreter Lox::interpreter;
 
 void Lox::main(int argc, char *argv[]) {
     if (argc > 2) {
@@ -27,6 +29,9 @@ void Lox::main(int argc, char *argv[]) {
 void Lox::runFile(const std::string &path) {
     if (hadError) {
         exit(65);
+    }
+    if (hadRuntimeError) {
+        exit(70);
     }
     std::ifstream file(path);
     if (!file) {
@@ -62,6 +67,7 @@ void Lox::run(const std::string &source) {
 
     AstPrinter printer;
     std::cout << printer.print(*expression) << std::endl;
+    interpreter.interpret(*expression);
 }
 
 void Lox::error(int line, const std::string &message) {
@@ -78,6 +84,13 @@ void Lox::error(Token &token, const std::string &message) {
     } else {
         report(token.line, " at '" + token.lexeme + "'", message);
     }
+
+}
+
+void Lox::runtimeError(const RuntimeError &error) {
+    std::cerr << error.what() << std::endl;
+    std::cerr << "[line " << error.token.line << "]" << std::endl;
+    hadRuntimeError = true;
 
 }
 

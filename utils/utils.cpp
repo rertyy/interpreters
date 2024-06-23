@@ -40,33 +40,55 @@ std::string castAnyToString(const std::any &value) {
     if (!value.has_value()) {
         std::cerr << "Failed to cast empty value to string" << std::endl;
         return {};
-    }
-
-    if (value.type() == typeid(std::string)) {
+    } else if (isString(value)) {
         return std::any_cast<std::string>(value);
-    } else if (value.type() == typeid(const char *)) {
-        return {std::any_cast<const char *>(value)};
-    } else if (value.type() == typeid(char)) {
-        return {1, std::any_cast<char>(value)};
-    } else if (value.type() == typeid(int)) {
-        return std::to_string(std::any_cast<int>(value));
-    } else if (value.type() == typeid(float)) {
-        return std::to_string(std::any_cast<float>(value));
-    } else if (value.type() == typeid(double)) {
-        return std::to_string(std::any_cast<double>(value));
-    } else if (value.type() == typeid(bool)) {
+    } else if (isNumber(value)) {
+        std::string doubleString = std::to_string(std::any_cast<double>(value));
+        if (doubleString.size() >= 2 && doubleString.substr(doubleString.size() - 2) == ".0") {
+            return doubleString.substr(0, doubleString.size() - 2);
+        } else {
+            return doubleString;
+        }
+    } else if (isBool(value)) {
         return std::any_cast<bool>(value) ? "true" : "false";
-    } else if (value.type() == typeid(long)) {
-        return std::to_string(std::any_cast<long>(value));
-    } else if (value.type() == typeid(unsigned int)) {
-        return std::to_string(std::any_cast<unsigned int>(value));
-    } else if (value.type() == typeid(unsigned long)) {
-        return std::to_string(std::any_cast<unsigned long>(value));
-    } else if (value.type() == typeid(std::vector<char>)) {
-        auto charVec = std::any_cast<std::vector<char>>(value);
-        return {charVec.begin(), charVec.end()};
+    } else if (isNil(value)) {
+        return "nil";
     } else {
         std::cerr << "Failed to cast type " << value.type().name() << " to string" << std::endl;
         return {};
+    }
+}
+
+
+bool isNumber(const std::any &s) {
+    return s.type() == typeid(double);
+}
+
+bool isString(const std::any &s) {
+    return s.type() == typeid(std::string);
+}
+
+bool isBool(const std::any &s) {
+    return s.type() == typeid(bool);
+}
+
+bool isNil(const std::any &s) {
+    return s.type() == typeid(std::nullptr_t);
+}
+
+
+bool isEquals(const std::any &a, const std::any &b) {
+    if (!a.has_value() || !b.has_value()) {
+        return !a.has_value() && !b.has_value();
+    } else if (isNil(a) && isNil(b)) {
+        return true;
+    } else if (isNumber(a) && isNumber(b)) {
+        return std::any_cast<double>(a) == std::any_cast<double>(b);
+    } else if (isString(a) && isString(b)) {
+        return std::any_cast<std::string>(a) == std::any_cast<std::string>(b);
+    } else if (isBool(a) && isBool(b)) {
+        return std::any_cast<bool>(a) == std::any_cast<bool>(b);
+    } else {
+        return false;
     }
 }

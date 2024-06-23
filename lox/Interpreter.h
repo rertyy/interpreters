@@ -11,9 +11,24 @@ public:
 
     std::any visitGroupingExpr(Grouping &expr) override;
 
+    std::any visitUnaryExpr(Unary &expr) override;
+
+    std::any visitBinaryExpr(Binary &expr) override;
+
+    void interpret(Expr &expr);
+
 private:
     std::any evaluate(Expr &expr);
 
+    // False and nil are falsey, everything else is truthy
+    bool isTruthy(std::any object);
+
+
+    bool isEqual(const std::any &a, const std::any &b);
+
+    void checkNumberOperand(const Token &op, const std::any &operand);
+
+    void checkNumberOperands(const Token &op, const std::any &left, const std::any &right);
 
 };
 

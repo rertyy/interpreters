@@ -3,12 +3,16 @@
 
 #include <string>
 #include "Token.h"
+#include "../../lox/RuntimeError.h"
+#include "../../lox/Interpreter.h"
 
 class Lox {
 public:
     static void main(int argc, char *argv[]);
 
     static bool hadError;
+
+    static bool hadRuntimeError;
 
     static void runFile(const std::string &path);
 
@@ -21,6 +25,11 @@ public:
     static void error(Token &token, const std::string &message);
 
     static void report(int line, const std::string &where, const std::string &message);
+
+    static void runtimeError(const RuntimeError &error);
+
+private:
+    static Interpreter interpreter;
 
 };
 
