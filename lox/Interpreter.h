@@ -5,7 +5,7 @@
 
 #include "../include/lox/Expr.h"
 
-class Interpreter : public Visitor {
+class Interpreter : public Expr::Visitor {
 public:
     std::any visitLiteralExpr(Literal &expr) override;
 

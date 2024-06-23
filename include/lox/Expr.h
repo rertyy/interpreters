@@ -5,8 +5,6 @@
 #include <memory>
 #include "Token.h"
 
-class Visitor;
-
 class Binary;
 
 class Grouping;
@@ -17,12 +15,14 @@ class Unary;
 
 class Expr {
 public:
+    class Visitor;
+
     virtual ~Expr() = default;
 
     virtual std::any accept(Visitor &visitor) = 0;
 };
 
-class Visitor {
+class Expr::Visitor {
 public:
     virtual std::any visitBinaryExpr(Binary &expr) = 0;
 

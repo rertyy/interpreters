@@ -13,11 +13,15 @@ void GenerateAST::main(int argc, char **argv) {
         exit(64);
     }
     std::string outputDir = argv[1];
-    defineAST(outputDir, "Expr", {
-            "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
-            "Grouping : std::shared_ptr<Expr> expression",
-            "Literal  : std::string value",
-            "Unary    : Token op, std::shared_ptr<Expr> right"
+//    defineAST(outputDir, "Expr", {
+//            "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
+//            "Grouping : std::shared_ptr<Expr> expression",
+//            "Literal  : std::string value",
+//            "Unary    : Token op, std::shared_ptr<Expr> right"
+//    });
+    defineAST(outputDir, "Stmt", {
+            "Expression : std::shared_ptr<Expr> expression",
+            "Print      : std::shared_ptr<Expr> expression"
     });
 }
 
@@ -57,7 +61,7 @@ void GenerateAST::defineASTCode(const std::string &outputDir, const std::string 
     writer << std::endl;
 
     for (const auto &[className, fields]: typesVec) {
-        writer << "std::string " << className << "::accept(Visitor &visitor) {" << std::endl;
+        writer << "std::any " << className << "::accept(Visitor &visitor) {" << std::endl;
         writer << "    return visitor.visit" << className << baseName << "(*this);" << std::endl;
         writer << "}" << std::endl;
         writer << std::endl;
@@ -112,42 +116,43 @@ void GenerateAST::defineASTHeader(const std::string &outputDir, const std::strin
     }
 }
 
-void GenerateAST::defineForwardDecls(std::ofstream &hWriter,
+void GenerateAST::defineForwardDecls(std::ofstream &writer,
                                      const std::vector<std::pair<std::string, std::string>> &typesVec) {
-    hWriter << "class Visitor;" << std::endl;
+    writer << "class Visitor;" << std::endl;
     for (const auto &[className, fields]: typesVec) {
-        hWriter << "class " << className << ";" << std::endl;
+        writer << "class " << className << ";" << std::endl;
     }
-    hWriter << std::endl;
+    writer << std::endl;
 }
 
 
-void GenerateAST::defineBaseClass(std::ofstream &hWriter, const std::string &baseName) {
-    hWriter << "class " << baseName << " {" << std::endl;
-    hWriter << "public:" << std::endl;
-    hWriter << "    virtual ~" << baseName << "() = default;" << std::endl;
-    hWriter << "    virtual std::string accept(Visitor &visitor) const = 0;" << std::endl;
-    hWriter << "};" << std::endl;
-    hWriter << std::endl;
+void GenerateAST::defineBaseClass(std::ofstream &writer, const std::string &baseName) {
+    writer << "class " << baseName << " {" << std::endl;
+    writer << "public:" << std::endl;
+    writer << "    class Visitor;" << std::endl;
+    writer << "    virtual ~" << baseName << "() = default;" << std::endl;
+    writer << "    virtual std::any accept(Visitor &visitor) = 0;" << std::endl;
+    writer << "};" << std::endl;
+    writer << std::endl;
 }
 
 void
 GenerateAST::defineVisitor(std::ofstream &writer, const std::string &baseName,
                            const std::vector<std::pair<std::string, std::string>> &typesVec) {
-    writer << "class Visitor {" << std::endl;
+    writer << "class " << baseName << "::Visitor {" << std::endl;
     writer << "public:" << std::endl;
     for (const auto &[className, fieldName]: typesVec) {
-        writer << "    virtual std::string visit" << className << baseName << "(const " << className << " &expr) = 0;"
+        writer << "    virtual std::any visit" << className << baseName << "(const " << className << " &expr) = 0;"
                << std::endl;
     }
     writer << "};" << std::endl;
     writer << std::endl;
 }
 
-void GenerateAST::defineSubclasses(std::ofstream &hWriter, const std::string &baseName,
+void GenerateAST::defineSubclasses(std::ofstream &writer, const std::string &baseName,
                                    const std::vector<std::pair<std::string, std::string>> &typesVec) {
     for (const auto &[className, fields]: typesVec) {
-        defineType(hWriter, baseName, className, fields);
+        defineType(writer, baseName, className, fields);
     }
 }
 
@@ -175,7 +180,7 @@ void GenerateAST::defineType(std::ofstream &writer, const std::string &baseName,
     }
 
     writer << std::endl;
-    writer << "    std::string accept(Visitor &visitor) override;" << std::endl;
+    writer << "    std::any accept(Visitor &visitor) override;" << std::endl;
     writer << "};" << std::endl;
     writer << std::endl;
 }
