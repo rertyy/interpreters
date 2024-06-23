@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Interpreter.h"
+#include "../include/lox/Interpreter.h"
 #include "../include/utils/utils.h"
 #include "RuntimeError.h"
 #include "../include/lox/Lox.h"
@@ -86,7 +86,7 @@ std::any Interpreter::visitBinaryExpr(Binary &expr) {
 }
 
 bool Interpreter::isEqual(const std::any& a, const std::any& b) {
-    return isEquals(a, b);
+    return ::isEquals(a, b);
 }
 
 void Interpreter::checkNumberOperand(const Token &op, const std::any &operand) {

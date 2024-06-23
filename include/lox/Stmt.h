@@ -6,8 +6,6 @@
 #include "Token.h"
 #include "Expr.h"
 
-class Visitor;
-
 class Expression;
 
 class Print;

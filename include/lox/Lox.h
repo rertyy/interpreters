@@ -4,7 +4,7 @@
 #include <string>
 #include "Token.h"
 #include "../../lox/RuntimeError.h"
-#include "../../lox/Interpreter.h"
+#include "Interpreter.h"
 
 class Lox {
 public:

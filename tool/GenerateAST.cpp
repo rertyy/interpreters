@@ -118,7 +118,6 @@ void GenerateAST::defineASTHeader(const std::string &outputDir, const std::strin
 
 void GenerateAST::defineForwardDecls(std::ofstream &writer,
                                      const std::vector<std::pair<std::string, std::string>> &typesVec) {
-    writer << "class Visitor;" << std::endl;
     for (const auto &[className, fields]: typesVec) {
         writer << "class " << className << ";" << std::endl;
     }

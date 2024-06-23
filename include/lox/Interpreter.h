@@ -1,10 +1,9 @@
-
 #ifndef INTERPRETERS_INTERPRETER_H
 #define INTERPRETERS_INTERPRETER_H
 
+#include "Expr.h"
 
-#include "../include/lox/Expr.h"
-
+// Class for evaluating expressions
 class Interpreter : public Expr::Visitor {
 public:
     std::any visitLiteralExpr(Literal &expr) override;
@@ -15,6 +14,10 @@ public:
 
     std::any visitBinaryExpr(Binary &expr) override;
 
+    /**
+     * Entry point for interpreter methods
+     * @param expr
+     */
     void interpret(Expr &expr);
 
 private:
@@ -23,9 +26,13 @@ private:
     // False and nil are falsey, everything else is truthy
     bool isTruthy(std::any object);
 
-
     bool isEqual(const std::any &a, const std::any &b);
 
+    /**
+     * Check if the operand is a number
+     * @param op
+     * @param operand
+     */
     void checkNumberOperand(const Token &op, const std::any &operand);
 
     void checkNumberOperands(const Token &op, const std::any &left, const std::any &right);

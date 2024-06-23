@@ -29,8 +29,18 @@ private:
     std::vector<Token> tokens;
     int current = 0;
 
+    /**
+     * Check if the current token matches any of the given types, and advance if it does
+     * @param types
+     * @return
+     */
     bool match(const std::vector<TokenType> &types);
 
+    /**
+     * Check if the current token matches the given type, without advancing
+     * @param type
+     * @return
+     */
     bool check(const TokenType &type);
 
     Token &advance();
