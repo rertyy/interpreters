@@ -8,18 +8,18 @@
 
 
 std::string AstPrinter::print(Expr &expr) {
-    return expr.accept(*this);
+    return castAnyToString(expr.accept(*this));
 }
 
-std::string AstPrinter::visitBinaryExpr(Binary &expr) {
+std::any AstPrinter::visitBinaryExpr(Binary &expr) {
     return parenthesize(expr.op.lexeme, expr.left, expr.right);
 }
 
-std::string AstPrinter::visitGroupingExpr(Grouping &expr) {
+std::any AstPrinter::visitGroupingExpr(Grouping &expr) {
     return parenthesize("group", expr.expression);
 }
 
-std::string AstPrinter::visitLiteralExpr(Literal &expr) {
+std::any AstPrinter::visitLiteralExpr(Literal &expr) {
     try {
         return castAnyToString(expr.value);
     } catch (const std::bad_any_cast &e) {
@@ -27,7 +27,7 @@ std::string AstPrinter::visitLiteralExpr(Literal &expr) {
     }
 }
 
-std::string AstPrinter::visitUnaryExpr(Unary &expr) {
+std::any AstPrinter::visitUnaryExpr(Unary &expr) {
     return parenthesize(expr.op.lexeme, expr.right);
 }
 

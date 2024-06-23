@@ -19,18 +19,18 @@ class Expr {
 public:
     virtual ~Expr() = default;
 
-    virtual std::string accept(Visitor &visitor) = 0;
+    virtual std::any accept(Visitor &visitor) = 0;
 };
 
 class Visitor {
 public:
-    virtual std::string visitBinaryExpr(Binary &expr) = 0;
+    virtual std::any visitBinaryExpr(Binary &expr) = 0;
 
-    virtual std::string visitGroupingExpr(Grouping &expr) = 0;
+    virtual std::any visitGroupingExpr(Grouping &expr) = 0;
 
-    virtual std::string visitLiteralExpr(Literal &expr) = 0;
+    virtual std::any visitLiteralExpr(Literal &expr) = 0;
 
-    virtual std::string visitUnaryExpr(Unary &expr) = 0;
+    virtual std::any visitUnaryExpr(Unary &expr) = 0;
 };
 
 class Binary : public Expr {
@@ -42,7 +42,7 @@ public:
     Token op;
     std::shared_ptr<Expr> right;
 
-    std::string accept(Visitor &visitor) override;
+    std::any accept(Visitor &visitor) override;
 };
 
 class Grouping : public Expr {
@@ -51,7 +51,7 @@ public:
 
     std::shared_ptr<Expr> expression;
 
-    std::string accept(Visitor &visitor) override;
+    std::any accept(Visitor &visitor) override;
 };
 
 class Literal : public Expr {
@@ -60,7 +60,7 @@ public:
 
     std::any value;
 
-    std::string accept(Visitor &visitor) override;
+    std::any accept(Visitor &visitor) override;
 };
 
 class Unary : public Expr {
@@ -70,7 +70,7 @@ public:
     Token op;
     std::shared_ptr<Expr> right;
 
-    std::string accept(Visitor &visitor) override;
+    std::any accept(Visitor &visitor) override;
 };
 
 #endif //INTERPRETERS_EXPR_H

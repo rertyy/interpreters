@@ -28,4 +28,6 @@ add_executable(interpreters
         include/lox/AstPrinter.h
         lox/Parser.cpp
         include/lox/Parser.h
+        lox/Interpreter.cpp
+        lox/Interpreter.h
 )

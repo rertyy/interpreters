@@ -1,18 +1,18 @@
 #include <any>
 #include "../include/lox/Expr.h"
 
-std::string Binary::accept(Visitor &visitor) {
+std::any Binary::accept(Visitor &visitor) {
     return visitor.visitBinaryExpr(*this);
 }
 
-std::string Grouping::accept(Visitor &visitor) {
+std::any Grouping::accept(Visitor &visitor) {
     return visitor.visitGroupingExpr(*this);
 }
 
-std::string Literal::accept(Visitor &visitor) {
+std::any Literal::accept(Visitor &visitor) {
     return visitor.visitLiteralExpr(*this);
 }
 
-std::string Unary::accept(Visitor &visitor) {
+std::any Unary::accept(Visitor &visitor) {
     return visitor.visitUnaryExpr(*this);
 }
