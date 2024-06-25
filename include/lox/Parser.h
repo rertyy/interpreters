@@ -9,6 +9,7 @@
 #include "TokenType.h"
 #include "Expr.h"
 #include "Lox.h"
+#include "Stmt.h"
 
 using
 enum TokenType;
@@ -24,6 +25,8 @@ public:
 
 
     std::shared_ptr<Expr> parse();
+
+    std::vector<std::shared_ptr<Stmt>> parseSequence();
 
 private:
     std::vector<Token> tokens;
@@ -76,6 +79,12 @@ private:
     void synchronize();
 
     std::shared_ptr<Expr> sequence();
+
+    std::shared_ptr<Stmt> statement();
+
+    std::shared_ptr<Stmt> expressionStatement();
+
+    std::shared_ptr<Stmt> printStatement();
 };
 
 

@@ -2,9 +2,10 @@
 #define INTERPRETERS_INTERPRETER_H
 
 #include "Expr.h"
+#include "Stmt.h"
 
 // Class for evaluating expressions
-class Interpreter : public Expr::Visitor {
+class Interpreter : public virtual Expr::Visitor, public virtual Stmt::Visitor {
 public:
     std::any visitLiteralExpr(Literal &expr) override;
 
@@ -13,6 +14,10 @@ public:
     std::any visitUnaryExpr(Unary &expr) override;
 
     std::any visitBinaryExpr(Binary &expr) override;
+
+    std::any visitExpressionStmt(Expression &stmt) override;
+
+    std::any visitPrintStmt(Print &stmt) override;
 
     /**
      * Entry point for interpreter methods

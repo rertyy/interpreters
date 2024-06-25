@@ -108,3 +108,14 @@ void Interpreter::interpret(Expr &expr) {
         Lox::error(0, e.what());
     }
 }
+
+std::any Interpreter::visitExpressionStmt(Expression &stmt) {
+    evaluate(*stmt.expression);
+    return nullptr;
+}
+
+std::any Interpreter::visitPrintStmt(Print &stmt) {
+    std::any value = evaluate(*stmt.expression);
+    std::cout << castAnyToString(value) << std::endl;
+
+}

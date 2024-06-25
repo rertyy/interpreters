@@ -123,7 +123,7 @@ std::shared_ptr<Expr> Parser::primary() {
     throw error(peek(), "Expect expression.");
 }
 
-// Look for closing brackets
+// Look for TokenType type e.g. closing brackets
 Token &Parser::consume(TokenType type, const std::string &message) {
     if (check(type)) return advance();
     throw error(peek(), message);
@@ -163,6 +163,32 @@ std::shared_ptr<Expr> Parser::parse() {
         Lox::hadError = true;
         return nullptr;
     }
+}
+
+std::vector<std::shared_ptr<Stmt>> Parser::parseSequence() {
+    std::vector<std::shared_ptr<Stmt>> statements;
+    while (!isAtEnd()) {
+        statements.push_back(statement());
+    }
+    return statements;
+}
+
+std::shared_ptr<Stmt> Parser::statement() {
+    if (match({PRINT})) return printStatement();
+    return expressionStatement();
+}
+
+
+std::shared_ptr<Stmt> Parser::printStatement() {
+    std::shared_ptr<Expr> value = expression();
+    consume(SEMICOLON, "Expect ';' after value.");
+    return std::make_shared<Print>(value);
+}
+
+std::shared_ptr<Stmt> Parser::expressionStatement() {
+    std::shared_ptr<Expr> expr = expression();
+    consume(SEMICOLON, "Expect ';' after expression.");
+    return std::make_shared<Expression>(expr);
 }
 
 

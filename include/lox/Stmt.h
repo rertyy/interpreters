@@ -21,9 +21,9 @@ public:
 
 class Stmt::Visitor {
 public:
-    virtual std::any visitExpressionStmt(const Expression &expr) = 0;
+    virtual std::any visitExpressionStmt(Expression &expr) = 0;
 
-    virtual std::any visitPrintStmt(const Print &expr) = 0;
+    virtual std::any visitPrintStmt(Print &expr) = 0;
 };
 
 class Expression : public Stmt {
