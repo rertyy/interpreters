@@ -129,7 +129,7 @@ Token &Parser::consume(TokenType type, const std::string &message) {
     throw error(peek(), message);
 }
 
-Parser::ParseError Parser::error(Token &token, const std::string &message) {
+Parser::ParseError Parser::error(const Token &token, const std::string &message) {
     Lox::error(token, message);
     return ParseError{};
 }

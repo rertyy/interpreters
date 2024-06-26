@@ -6,19 +6,19 @@
 
 class AstPrinter : public Expr::Visitor {
 public:
-    std::string print(Expr &expr);
+    std::string print(const Expr &expr);
 
-    std::any visitBinaryExpr(Binary &expr) override;
+    std::any visitBinaryExpr(const Binary &expr) const override;
 
-    std::any visitGroupingExpr(Grouping &expr) override;
+    std::any visitGroupingExpr(const Grouping &expr) const override;
 
-    std::any visitLiteralExpr(Literal &expr) override;
+    std::any visitLiteralExpr(const Literal &expr) const override;
 
-    std::any visitUnaryExpr(Unary &expr) override;
+    std::any visitUnaryExpr(const Unary &expr) const override;
 
     template<typename... Exprs>
     std::string parenthesize(const std::string &name,
-                             Exprs &&... expressions);
+                             Exprs &&... expressions) const;
 };
 
 #endif //INTERPRETERS_ASTPRINTER_H

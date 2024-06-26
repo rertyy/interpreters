@@ -7,19 +7,19 @@
 #include "../include/utils/utils.h"
 
 
-std::string AstPrinter::print(Expr &expr) {
+std::string AstPrinter::print(const Expr &expr) {
     return castAnyToString(expr.accept(*this));
 }
 
-std::any AstPrinter::visitBinaryExpr(Binary &expr) {
+std::any AstPrinter::visitBinaryExpr(const Binary &expr) const {
     return parenthesize(expr.op.lexeme, expr.left, expr.right);
 }
 
-std::any AstPrinter::visitGroupingExpr(Grouping &expr) {
+std::any AstPrinter::visitGroupingExpr(const Grouping &expr) const {
     return parenthesize("group", expr.expression);
 }
 
-std::any AstPrinter::visitLiteralExpr(Literal &expr) {
+std::any AstPrinter::visitLiteralExpr(const Literal &expr) const {
     try {
         return castAnyToString(expr.value);
     } catch (const std::bad_any_cast &e) {
@@ -27,14 +27,14 @@ std::any AstPrinter::visitLiteralExpr(Literal &expr) {
     }
 }
 
-std::any AstPrinter::visitUnaryExpr(Unary &expr) {
+std::any AstPrinter::visitUnaryExpr(const Unary &expr) const {
     return parenthesize(expr.op.lexeme, expr.right);
 }
 
 template<typename... Exprs>
 std::string
 AstPrinter::parenthesize(const std::string &name,
-                         Exprs &&... expressions) {
+                         Exprs &&... expressions) const {
     std::string result = "(" + name;
     ((result += " " + std::any_cast<std::string>(expressions->accept(*this))), ...);
     result += ")";

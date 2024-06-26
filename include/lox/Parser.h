@@ -73,7 +73,7 @@ private:
     // Look for closing brackets
     Token &consume(TokenType type, const std::string &message);
 
-    ParseError error(Token &token, const std::string &message);
+    ParseError error(const Token &token, const std::string &message);
 
     // Checks until statement boundary before synchronizing state for error handling
     void synchronize();

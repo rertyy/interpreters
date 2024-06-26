@@ -6,19 +6,19 @@
 
 using enum TokenType;
 
-std::any Interpreter::visitLiteralExpr(Literal &expr) {
+std::any Interpreter::visitLiteralExpr(const Literal &expr) const {
     return expr.value;
 }
 
-std::any Interpreter::visitGroupingExpr(Grouping &expr) {
+std::any Interpreter::visitGroupingExpr(const Grouping &expr) const {
     return evaluate(*expr.expression);
 }
 
-std::any Interpreter::evaluate(Expr &expr) {
+std::any Interpreter::evaluate(Expr &expr) const {
     return expr.accept(*this);
 }
 
-std::any Interpreter::visitUnaryExpr(Unary &expr) {
+std::any Interpreter::visitUnaryExpr(const Unary &expr) const {
     std::any right = evaluate(*expr.right);
 
     switch (expr.op.type) {
@@ -31,14 +31,14 @@ std::any Interpreter::visitUnaryExpr(Unary &expr) {
     }
 }
 
-bool Interpreter::isTruthy(std::any object) {
+bool Interpreter::isTruthy(std::any object) const {
     if (object.type() == typeid(bool)) {
         return std::any_cast<bool>(object);
     }
     return object.type() != typeid(std::nullptr_t);
 }
 
-std::any Interpreter::visitBinaryExpr(Binary &expr) {
+std::any Interpreter::visitBinaryExpr(const Binary &expr) const {
     std::any left = evaluate(*expr.left);
     std::any right = evaluate(*expr.right);
 
@@ -85,7 +85,7 @@ std::any Interpreter::visitBinaryExpr(Binary &expr) {
     }
 }
 
-bool Interpreter::isEqual(const std::any& a, const std::any& b) {
+bool Interpreter::isEqual(const std::any& a, const std::any& b) const {
     return ::isEquals(a, b);
 }
 
@@ -95,12 +95,12 @@ void Interpreter::checkNumberOperand(const Token &op, const std::any &operand) {
     throw RuntimeError(op, "Operand must be a number");
 }
 
-void Interpreter::checkNumberOperands(const Token &op, const std::any &left, const std::any &right) {
+void Interpreter::checkNumberOperands(const Token &op, const std::any &left, const std::any &right) const {
     if (isNumber(left) && isNumber(right)) return;
     throw RuntimeError(op, "Operands must be numbers");
 }
 
-void Interpreter::interpret(Expr &expr) {
+void Interpreter::interpret(Expr &expr) const {
     try {
         std::any value = evaluate(expr);
         std::cout << castAnyToString(value) << std::endl;
@@ -109,13 +109,15 @@ void Interpreter::interpret(Expr &expr) {
     }
 }
 
-std::any Interpreter::visitExpressionStmt(Expression &stmt) {
+std::any Interpreter::visitExpressionStmt(const Expression &stmt) const {
     evaluate(*stmt.expression);
     return nullptr;
 }
 
-std::any Interpreter::visitPrintStmt(Print &stmt) {
+std::any Interpreter::visitPrintStmt(const Print &stmt) const {
     std::any value = evaluate(*stmt.expression);
     std::cout << castAnyToString(value) << std::endl;
+    return nullptr;
+}
 
 }
