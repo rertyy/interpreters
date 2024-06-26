@@ -34,20 +34,22 @@ private:
 
     /**
      * Check if the current token matches any of the given types, and advance if it does
-     * @param types
-     * @return
      */
     bool match(const std::vector<TokenType> &types);
 
     /**
      * Check if the current token matches the given type, without advancing
-     * @param type
-     * @return
      */
     bool check(const TokenType &type);
 
+    /**
+     * Advance the current token
+     */
     Token &advance();
 
+    /**
+     * Checks for EOF_TOKEN
+     */
     bool isAtEnd();
 
     Token &peek();
@@ -70,12 +72,22 @@ private:
 
     std::shared_ptr<Expr> primary();
 
-    // Look for closing brackets
+    /**
+     * Look for TokenType type e.g. closing brackets
+     */
     Token &consume(TokenType type, const std::string &message);
 
+    /**
+     * Parse error handling
+     * Tells Lox that there is an error as well as the line number and the message
+     */
     ParseError error(const Token &token, const std::string &message);
 
-    // Checks until statement boundary before synchronizing state for error handling
+    /**
+     * Checks until statement boundary before synchronizing state for error handling
+     * Used for statements so tokens that are syntax errors are skipped
+     * and the parser can continue parsing
+     */
     void synchronize();
 
     std::shared_ptr<Expr> sequence();

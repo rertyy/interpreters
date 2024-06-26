@@ -16,6 +16,9 @@ public:
 
     std::any visitUnaryExpr(const Unary &expr) const override;
 
+    /**
+     * @brief Parenthesize the given expressions into Polish notation
+     */
     template<typename... Exprs>
     std::string parenthesize(const std::string &name,
                              Exprs &&... expressions) const;
