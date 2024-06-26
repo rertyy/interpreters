@@ -19,6 +19,7 @@ bool Parser::check(const TokenType &type) {
     return peek().type == type;
 }
 
+
 Token &Parser::advance() {
     if (!isAtEnd()) ++current;
     return previous();
@@ -36,7 +37,6 @@ Token &Parser::previous() {
     return tokens[current - 1];
 }
 
-// Start
 std::shared_ptr<Expr> Parser::expression() {
     return sequence();
 }
@@ -123,7 +123,6 @@ std::shared_ptr<Expr> Parser::primary() {
     throw error(peek(), "Expect expression.");
 }
 
-// Look for TokenType type e.g. closing brackets
 Token &Parser::consume(TokenType type, const std::string &message) {
     if (check(type)) return advance();
     throw error(peek(), message);

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../include/lox/Interpreter.h"
 #include "../include/utils/utils.h"
-#include "RuntimeError.h"
+#include "../include/lox/RuntimeError.h"
 #include "../include/lox/Lox.h"
 
 using enum TokenType;
@@ -14,7 +14,7 @@ std::any Interpreter::visitGroupingExpr(const Grouping &expr) const {
     return evaluate(*expr.expression);
 }
 
-std::any Interpreter::evaluate(Expr &expr) const {
+std::any Interpreter::evaluate(const Expr &expr) const {
     return expr.accept(*this);
 }
 
@@ -31,7 +31,7 @@ std::any Interpreter::visitUnaryExpr(const Unary &expr) const {
     }
 }
 
-bool Interpreter::isTruthy(std::any object) const {
+bool Interpreter::isTruthy(const std::any &object) const {
     if (object.type() == typeid(bool)) {
         return std::any_cast<bool>(object);
     }
@@ -100,7 +100,7 @@ void Interpreter::checkNumberOperands(const Token &op, const std::any &left, con
     throw RuntimeError(op, "Operands must be numbers");
 }
 
-void Interpreter::interpret(Expr &expr) const {
+void Interpreter::interpret(const Expr &expr) const {
     try {
         std::any value = evaluate(expr);
         std::cout << castAnyToString(value) << std::endl;
