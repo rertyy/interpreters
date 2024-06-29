@@ -38,7 +38,7 @@ Token &Parser::previous() {
 }
 
 std::shared_ptr<Expr> Parser::expression() {
-    return sequence();
+    return assignment();
 }
 
 std::shared_ptr<Expr> Parser::sequence() {
@@ -124,7 +124,10 @@ std::shared_ptr<Expr> Parser::primary() {
 }
 
 Token &Parser::consume(TokenType type, const std::string &message) {
-    if (check(type)) return advance();
+    bool checked = check(type);
+    if (checked) {
+        return advance();
+    }
     throw error(peek(), message);
 }
 
