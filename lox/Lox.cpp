@@ -50,10 +50,11 @@ void Lox::runPrompt() {
         std::cout << "> ";
         if (!std::getline(std::cin, line)) break;
         run(line);
+//        runExpr(line);
     }
 }
 
-void Lox::run(const std::string &source) {
+void Lox::runExpr(const std::string &source) {
     Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
 
@@ -68,6 +69,21 @@ void Lox::run(const std::string &source) {
     AstPrinter printer;
     std::cout << printer.print(*expression) << std::endl;
     interpreter.interpret(*expression);
+}
+
+void Lox::run(const std::string &source) {
+    Scanner scanner{source};
+    std::vector<Token> tokens = scanner.scanTokens();
+
+    for (const Token &token: tokens) {
+        std::cout << token.toString() << std::endl;
+    }
+
+    Parser parser{tokens};
+    std::vector<std::shared_ptr<Stmt>> statements = parser.parseSequence();
+    if (hadError) return;
+
+    interpreter.interpret(statements); // I think it's being copied here
 }
 
 void Lox::error(int line, const std::string &message) {

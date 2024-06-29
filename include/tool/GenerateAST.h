@@ -16,7 +16,7 @@ public:
 
 private:
     static void
-    defineAST(const std::string &outputDir, const std::string &baseName,
+    defineAST(const std::string &codeOutputDir, const std::string &headerOutputDir, const std::string &baseName,
               const std::vector<std::string> &types);
 
     static void

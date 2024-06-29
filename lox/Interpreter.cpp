@@ -109,6 +109,22 @@ void Interpreter::interpret(const Expr &expr) const {
     }
 }
 
+void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements) const {
+    try {
+        for (const std::shared_ptr<Stmt>& stmt: statements) {
+            execute(*stmt);
+        }
+    } catch (const RuntimeError &e) {
+        Lox::runtimeError(e);
+    }
+
+}
+
+void Interpreter::execute(const Stmt & stmt) const {
+    stmt.accept(*this);
+}
+
+
 std::any Interpreter::visitExpressionStmt(const Expression &stmt) const {
     evaluate(*stmt.expression);
     return nullptr;
@@ -118,6 +134,4 @@ std::any Interpreter::visitPrintStmt(const Print &stmt) const {
     std::any value = evaluate(*stmt.expression);
     std::cout << castAnyToString(value) << std::endl;
     return nullptr;
-}
-
 }

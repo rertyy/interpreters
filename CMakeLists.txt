@@ -30,7 +30,7 @@ add_executable(interpreters
         include/lox/Parser.h
         lox/Interpreter.cpp
         include/lox/Interpreter.h
-        lox/RuntimeError.h
+        include/lox/RuntimeError.h
         include/lox/Stmt.h
         lox/Stmt.cpp
 )

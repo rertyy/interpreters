@@ -8,25 +8,30 @@
 #include <string>
 
 void GenerateAST::main(int argc, char **argv) {
-    if (argc != 2) {
-        std::cerr << "Usage: generate_ast <output directory>" << std::endl;
+    if (argc != 3) {
+        std::cerr << "Usage: generate_ast <cpp output directory> <header output directory>" << std::endl;
         exit(64);
     }
-    std::string outputDir = argv[1];
-//    defineAST(outputDir, "Expr", {
-//            "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
-//            "Grouping : std::shared_ptr<Expr> expression",
-//            "Literal  : std::string value",
-//            "Unary    : Token op, std::shared_ptr<Expr> right"
-//    });
-    defineAST(outputDir, "Stmt", {
+    std::string codeOutputDir = argv[1];
+    std::string headerOutputDir = argv[2];
+    defineAST(codeOutputDir, headerOutputDir, "Expr", {
+            "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
+            "Grouping : std::shared_ptr<Expr> expression",
+            "Literal  : std::string value",
+            "Unary    : Token op, std::shared_ptr<Expr> right"
+            "Variable : Token name"
+    });
+    defineAST(codeOutputDir, headerOutputDir, "Stmt", {
             "Expression : std::shared_ptr<Expr> expression",
             "Print      : std::shared_ptr<Expr> expression"
+            "Var        : Token name, std::shared_ptr<Expr> initializer"
     });
 }
 
-void GenerateAST::defineAST(const std::string &outputDir, const std::string &baseName,
-                            const std::vector<std::string> &types) {
+void
+GenerateAST::defineAST(const std::string &codeOutputDir, const std::string &headerOutputDir,
+                       const std::string &baseName,
+                       const std::vector<std::string> &types) {
 
     std::vector<std::pair<std::string, std::string>> typesVec;
     for (const auto &type: types) {
@@ -41,8 +46,8 @@ void GenerateAST::defineAST(const std::string &outputDir, const std::string &bas
     std::transform(baseNameUpper.begin(), baseNameUpper.end(), baseNameUpper.begin(), ::toupper);
 
 
-    defineASTHeader(outputDir, baseName, typesVec, baseNameUpper);
-    defineASTCode(outputDir, baseName, typesVec);
+    defineASTHeader(headerOutputDir, baseName, typesVec, baseNameUpper);
+    defineASTCode(codeOutputDir, baseName, typesVec);
 }
 
 void GenerateAST::defineASTCode(const std::string &outputDir, const std::string &baseName,
@@ -57,11 +62,11 @@ void GenerateAST::defineASTCode(const std::string &outputDir, const std::string 
     std::cout << "Writing to " << path << std::endl;
 
     writer << "#include <any>" << std::endl;
-    writer << "#include \"" << baseName << ".h\"" << std::endl;
+    writer << "#include \"../include/lox/" << baseName << ".h\"" << std::endl;
     writer << std::endl;
 
     for (const auto &[className, fields]: typesVec) {
-        writer << "std::any " << className << "::accept(Visitor &visitor) {" << std::endl;
+        writer << "std::any " << className << "::accept(const Visitor &visitor) const {" << std::endl;
         writer << "    return visitor.visit" << className << baseName << "(*this);" << std::endl;
         writer << "}" << std::endl;
         writer << std::endl;
@@ -120,8 +125,8 @@ void GenerateAST::defineForwardDecls(std::ofstream &writer,
                                      const std::vector<std::pair<std::string, std::string>> &typesVec) {
     for (const auto &[className, fields]: typesVec) {
         writer << "class " << className << ";" << std::endl;
+        writer << std::endl;
     }
-    writer << std::endl;
 }
 
 

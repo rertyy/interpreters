@@ -21,13 +21,15 @@ void testAst() {
 }
 
 void codegen() {
-    char *args[] = {const_cast<char *>("generate_ast"), const_cast<char *>("/home/ian/interpreters/lox")};
-    GenerateAST::main(2, args);
+    char *args[] = {const_cast<char *>("generate_ast"),
+                    const_cast<char *>("/home/ian/interpreters/lox"),
+                    const_cast<char *>("/home/ian/interpreters/include/lox")};
+    GenerateAST::main(3, args);
 }
 
 
 int main(int argc, char *argv[]) {
-//    codegen();
+    codegen();
 //    testAst();
     Lox::main(argc, argv);
     return 0;

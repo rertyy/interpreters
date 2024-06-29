@@ -3,7 +3,7 @@
 
 #include <string>
 #include "Token.h"
-#include "../../lox/RuntimeError.h"
+#include "RuntimeError.h"
 #include "Interpreter.h"
 
 class Lox {
@@ -19,6 +19,9 @@ public:
     static void runPrompt();
 
     static void run(const std::string &source);
+
+    static void runExpr(const std::string &source);
+
 
     static void error(int line, const std::string &message);
 
