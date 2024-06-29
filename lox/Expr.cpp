@@ -17,6 +17,7 @@ std::any Unary::accept(Visitor &visitor) {
     return visitor.visitUnaryExpr(*this);
 }
 
-std::any Variable::accept(Expr::Visitor &visitor) {
+std::any Variable::accept(Visitor &visitor) {
     return visitor.visitVariableExpr(*this);
 }
+

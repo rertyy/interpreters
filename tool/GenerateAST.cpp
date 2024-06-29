@@ -17,13 +17,13 @@ void GenerateAST::main(int argc, char **argv) {
     defineAST(codeOutputDir, headerOutputDir, "Expr", {
             "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
             "Grouping : std::shared_ptr<Expr> expression",
-            "Literal  : const std::any value",
-            "Unary    : Token op, std::shared_ptr<Expr> right"
+            "Literal  : std::any value",
+            "Unary    : Token op, std::shared_ptr<Expr> right",
             "Variable : Token name"
     });
     defineAST(codeOutputDir, headerOutputDir, "Stmt", {
             "Expression : std::shared_ptr<Expr> expression",
-            "Print      : std::shared_ptr<Expr> expression"
+            "Print      : std::shared_ptr<Expr> expression",
             "Var        : Token name, std::shared_ptr<Expr> initializer"
     });
 }

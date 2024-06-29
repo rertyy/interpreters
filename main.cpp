@@ -29,7 +29,7 @@ void codegen() {
 
 
 int main(int argc, char *argv[]) {
-//    codegen();
+    codegen();
 //    testAst();
     Lox::main(argc, argv);
     return 0;

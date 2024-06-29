@@ -12,3 +12,4 @@ std::any Print::accept(Visitor &visitor) {
 std::any Var::accept(Visitor &visitor) {
     return visitor.visitVarStmt(*this);
 }
+
