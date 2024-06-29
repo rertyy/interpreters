@@ -23,11 +23,11 @@ public:
 
 class Stmt::Visitor {
 public:
-    virtual std::any visitExpressionStmt( Expression &expr) = 0;
+    virtual std::any visitExpressionStmt(Expression &expr) = 0;
 
-    virtual std::any visitPrintStmt( Print &expr) = 0;
+    virtual std::any visitPrintStmt(Print &expr) = 0;
 
-    virtual std::any visitVarStmt( Var &expr) = 0;
+    virtual std::any visitVarStmt(Var &expr) = 0;
 
 };
 
@@ -51,7 +51,8 @@ public:
 
 class Var : public Stmt {
 public:
-    explicit Var(Token name, std::shared_ptr<Expr> initializer) : name(std::move(name)), initializer(std::move(initializer)) {}
+    explicit Var(Token name, std::shared_ptr<Expr> initializer) : name(std::move(name)),
+                                                                  initializer(std::move(initializer)) {}
 
     Token name;
     std::shared_ptr<Expr> initializer;

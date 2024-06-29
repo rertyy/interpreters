@@ -119,7 +119,7 @@ private:
      */
     void synchronize();
 
-    std::shared_ptr<Expr> sequence();
+    std::shared_ptr<Expr> commaOperator();
 
     std::shared_ptr<Stmt> statement();
 

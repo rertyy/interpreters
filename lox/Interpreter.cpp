@@ -47,6 +47,8 @@ std::any Interpreter::visitBinaryExpr( Binary &expr)  {
     std::any right = evaluate(*expr.right);
 
     switch (expr.op.type) {
+        case TokenType::COMMA:
+            return right;
         case TokenType::GREATER:
             checkNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) > std::any_cast<double>(right);

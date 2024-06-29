@@ -38,15 +38,17 @@ Token &Parser::previous() {
 }
 
 std::shared_ptr<Expr> Parser::expression() {
-    return assignment();
+    return commaOperator();
 }
 
-std::shared_ptr<Expr> Parser::sequence() {
-    std::shared_ptr<Expr> expr = equality();
+// I added this! This is a comma operator for CPP which has left-to-right associativity
+// and has lower precedence than assignment
+std::shared_ptr<Expr> Parser::commaOperator() {
+    std::shared_ptr<Expr> expr = assignment();
 
     while (match({COMMA})) {
         Token &op = previous();
-        std::shared_ptr<Expr> right = equality();
+        std::shared_ptr<Expr> right = commaOperator();
         expr = std::make_shared<Binary>(expr, op, right);
     }
     return expr;
@@ -170,7 +172,11 @@ std::shared_ptr<Expr> Parser::parse() {
 std::vector<std::shared_ptr<Stmt>> Parser::parseSequence() {
     std::vector<std::shared_ptr<Stmt>> statements;
     while (!isAtEnd()) {
-        statements.push_back(declaration());
+        try {
+            statements.push_back(declaration());
+        } catch (ParseError &error) {
+            synchronize();
+        }
     }
     return statements;
 }
@@ -204,7 +210,7 @@ std::shared_ptr<Stmt> Parser::declaration() {
 }
 
 std::shared_ptr<Stmt> Parser::varDeclaration() {
-    Token name = consume(IDENTIFIER, "Expect variable name.");
+    Token &name = consume(IDENTIFIER, "Expect variable name.");
 
     std::shared_ptr<Expr> initializer = nullptr;
     if (match({EQUAL})) {
@@ -215,27 +221,24 @@ std::shared_ptr<Stmt> Parser::varDeclaration() {
     return std::make_shared<Var>(name, initializer);
 }
 
-
 // Because LHS and RHS are both valid expressions, run expressions on both LHS and RHS
 std::shared_ptr<Expr> Parser::assignment() {
     std::shared_ptr<Expr> expr = equality();
 
     if (match({EQUAL})) {
-        Token equals = previous(); // the l-value
-        std::shared_ptr<Expr> value = assignment(); // assignment is right-associative i.e. y=x=1 has y==1
+        Token &equals = previous(); // the l-value
+        std::shared_ptr<Expr> value = assignment();
+        // assignment is right-associative i.e. y=x=1 has y==1
 
         // dynamic_cast is equivalent to Java instanceof
         if (auto varPtr = std::dynamic_pointer_cast<Variable>(expr)) {
             Token name = varPtr->name;
             return std::make_shared<Assign>(name, value);
         }
-
-// Don't throw because parser knows which point it is inside the code
+        // Don't throw because parser knows which point it is inside the code
         error(equals, "Invalid assignment target.");
     }
-
     return expr;
-
 }
 
 
