@@ -1,6 +1,10 @@
 #include <any>
 #include "../include/lox/Expr.h"
 
+std::any Assign::accept(Visitor &visitor) {
+    return visitor.visitAssignExpr(*this);
+}
+
 std::any Binary::accept(Visitor &visitor) {
     return visitor.visitBinaryExpr(*this);
 }

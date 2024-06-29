@@ -112,11 +112,7 @@ std::shared_ptr<Expr> Parser::primary() {
     if (match({TRUE})) return std::make_shared<Literal>(true);
     if (match({NIL})) return std::make_shared<Literal>(nullptr);
     if (match({NUMBER, STRING})) return std::make_shared<Literal>(previous().literal);
-
-    if (match({IDENTIFIER})) {
-        return std::make_shared<Variable>(previous());
-    }
-
+    if (match({IDENTIFIER})) return std::make_shared<Variable>(previous());
     if (match({LEFT_PAREN})) {
         std::shared_ptr<Expr> expr = expression();
         // Look for closing bracket
@@ -215,5 +211,30 @@ std::shared_ptr<Stmt> Parser::varDeclaration() {
     consume(SEMICOLON, "Expect ';' after variable declaration.");
     return std::make_shared<Var>(name, initializer);
 }
+
+
+// Because LHS and RHS are both valid expressions, run expressions on both LHS and RHS
+std::shared_ptr<Expr> Parser::assignment() {
+    std::shared_ptr<Expr> expr = equality();
+
+    if (match({EQUAL})) {
+        Token equals = previous(); // the l-value
+        std::shared_ptr<Expr> value = assignment(); // assignment is right-associative i.e. y=x=1 has y==1
+
+        // dynamic_cast is equivalent to Java instanceof
+        if (auto varPtr = std::dynamic_pointer_cast<Variable>(expr)) {
+            Token name = varPtr->name;
+            return std::make_shared<Assign>(name, value);
+        }
+
+// Don't throw because parser knows which point it is inside the code
+        error(equals, "Invalid assignment target.");
+    }
+
+    return expr;
+
+}
+
+
 
 

@@ -36,6 +36,11 @@ std::any AstPrinter::visitVariableExpr(Variable &expr) {
     return expr.name.lexeme;
 }
 
+std::any AstPrinter::visitAssignExpr(Assign &expr) {
+    const std::string name = "= " + expr.name.lexeme;
+    return parenthesize(name, expr.value);
+}
+
 template<typename... Exprs>
 std::string
 AstPrinter::parenthesize(const std::string &name,

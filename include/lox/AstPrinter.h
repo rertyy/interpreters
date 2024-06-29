@@ -18,6 +18,8 @@ public:
 
     std::any visitVariableExpr(Variable &expr) override;
 
+    std::any visitAssignExpr(Assign &expr) override;
+
     /**
      * @brief Parenthesize the given expressions into Polish notation
      */

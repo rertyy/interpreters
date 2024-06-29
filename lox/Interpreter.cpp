@@ -149,3 +149,9 @@ std::any Interpreter::visitVarStmt( Var &stmt) {
     environment.define(stmt.name.lexeme, value);
     return nullptr;
 }
+
+std::any Interpreter::visitAssignExpr(Assign &expr) {
+    std::any value = evaluate(*expr.value);
+    environment.assign(expr.name, value);
+    return value;
+}

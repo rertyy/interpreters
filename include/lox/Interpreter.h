@@ -20,6 +20,8 @@ public:
 
     std::any visitVariableExpr(Variable &expr) override;
 
+    std::any visitAssignExpr(Assign &expr) override;
+
     // Statement visitors
     std::any visitExpressionStmt(Expression &stmt) override;
 

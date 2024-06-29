@@ -16,6 +16,8 @@ public:
     std::any get(const Token &name) const;
 
     void define(const std::string &name, const std::any &value);
+
+    void assign(const Token &name, const std::any &value);
 };
 
 

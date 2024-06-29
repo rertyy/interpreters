@@ -6,6 +6,8 @@
 #include "Token.h"
 #include "Expr.h"
 
+class Assign;
+
 class Binary;
 
 class Grouping;
@@ -27,21 +29,35 @@ public:
 
 class Expr::Visitor {
 public:
-    virtual std::any visitBinaryExpr( Binary &expr) = 0;
+    virtual std::any visitAssignExpr(Assign &expr) = 0;
 
-    virtual std::any visitGroupingExpr( Grouping &expr) = 0;
+    virtual std::any visitBinaryExpr(Binary &expr) = 0;
 
-    virtual std::any visitLiteralExpr( Literal &expr) = 0;
+    virtual std::any visitGroupingExpr(Grouping &expr) = 0;
 
-    virtual std::any visitUnaryExpr( Unary &expr) = 0;
+    virtual std::any visitLiteralExpr(Literal &expr) = 0;
 
-    virtual std::any visitVariableExpr( Variable &expr) = 0;
+    virtual std::any visitUnaryExpr(Unary &expr) = 0;
 
+    virtual std::any visitVariableExpr(Variable &expr) = 0;
+
+};
+
+class Assign : public Expr {
+public:
+    explicit Assign(Token name, std::shared_ptr<Expr> value) : name(std::move(name)), value(std::move(value)) {}
+
+    Token name;
+    std::shared_ptr<Expr> value;
+
+    std::any accept(Visitor &visitor) override;
 };
 
 class Binary : public Expr {
 public:
-    explicit Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left(std::move(left)), op(std::move(op)), right(std::move(right)) {}
+    explicit Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left(std::move(left)),
+                                                                                         op(std::move(op)),
+                                                                                         right(std::move(right)) {}
 
     std::shared_ptr<Expr> left;
     Token op;

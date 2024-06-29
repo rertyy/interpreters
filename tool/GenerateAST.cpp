@@ -15,6 +15,7 @@ void GenerateAST::main(int argc, char **argv) {
     std::string codeOutputDir = argv[1];
     std::string headerOutputDir = argv[2];
     defineAST(codeOutputDir, headerOutputDir, "Expr", {
+            "Assign   : Token name, std::shared_ptr<Expr> value",
             "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
             "Grouping : std::shared_ptr<Expr> expression",
             "Literal  : std::any value",

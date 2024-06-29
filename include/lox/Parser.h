@@ -14,6 +14,35 @@
 using
 enum TokenType;
 
+/*
+ * ============ GRAMMAR =============
+ * program        → statement* EOF ;
+ *
+ * statement      → exprStmt
+ *                | printStmt ;
+ *
+ * exprStmt       → expression ";" ;
+ * printStmt      → "print" expression ";" ;
+ *
+ * expression     → literal
+ *                | unary
+ *                | binary
+ *                | grouping ;
+ *
+ * expression     → assignment ;
+ * assignment     → IDENTIFIER "=" assignment
+ *                | equality ;
+ * equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+ * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+ * term           → factor ( ( "-" | "+" ) factor )* ;
+ * factor         → unary ( ( "/" | "*" ) unary )* ;
+ * unary          → ( "!" | "-" ) unary
+ *                | primary ;
+ * primary        → NUMBER | STRING | "true" | "false" | "nil"
+ *                | "(" expression ")" ;
+ */
+
+
 class Parser {
 public:
     explicit Parser(std::vector<Token> tokens) : tokens(std::move(tokens)) {}
@@ -95,6 +124,8 @@ private:
     std::shared_ptr<Stmt> statement();
 
     std::shared_ptr<Stmt> expressionStatement();
+
+    std::shared_ptr<Expr> assignment();
 
     std::shared_ptr<Stmt> printStatement();
 
