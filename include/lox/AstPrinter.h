@@ -6,22 +6,24 @@
 
 class AstPrinter : public Expr::Visitor {
 public:
-    std::string print(const Expr &expr);
+    std::string print(Expr &expr);
 
-    std::any visitBinaryExpr(const Binary &expr) const override;
+    std::any visitBinaryExpr(Binary &expr) override;
 
-    std::any visitGroupingExpr(const Grouping &expr) const override;
+    std::any visitGroupingExpr(Grouping &expr) override;
 
-    std::any visitLiteralExpr(const Literal &expr) const override;
+    std::any visitLiteralExpr(Literal &expr) override;
 
-    std::any visitUnaryExpr(const Unary &expr) const override;
+    std::any visitUnaryExpr(Unary &expr) override;
+
+    std::any visitVariableExpr(Variable &expr) override;
 
     /**
      * @brief Parenthesize the given expressions into Polish notation
      */
     template<typename... Exprs>
     std::string parenthesize(const std::string &name,
-                             Exprs &&... expressions) const;
+                             Exprs &&... expressions);
 };
 
 #endif //INTERPRETERS_ASTPRINTER_H

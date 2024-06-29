@@ -113,6 +113,10 @@ std::shared_ptr<Expr> Parser::primary() {
     if (match({NIL})) return std::make_shared<Literal>(nullptr);
     if (match({NUMBER, STRING})) return std::make_shared<Literal>(previous().literal);
 
+    if (match({IDENTIFIER})) {
+        return std::make_shared<Variable>(previous());
+    }
+
     if (match({LEFT_PAREN})) {
         std::shared_ptr<Expr> expr = expression();
         // Look for closing bracket
@@ -167,7 +171,7 @@ std::shared_ptr<Expr> Parser::parse() {
 std::vector<std::shared_ptr<Stmt>> Parser::parseSequence() {
     std::vector<std::shared_ptr<Stmt>> statements;
     while (!isAtEnd()) {
-        statements.push_back(statement());
+        statements.push_back(declaration());
     }
     return statements;
 }
@@ -188,6 +192,28 @@ std::shared_ptr<Stmt> Parser::expressionStatement() {
     std::shared_ptr<Expr> expr = expression();
     consume(SEMICOLON, "Expect ';' after expression.");
     return std::make_shared<Expression>(expr);
+}
+
+std::shared_ptr<Stmt> Parser::declaration() {
+    try {
+        if (match({VAR})) return varDeclaration();
+        return statement();
+    } catch (ParseError &error) {
+        synchronize();
+        return {};
+    }
+}
+
+std::shared_ptr<Stmt> Parser::varDeclaration() {
+    Token name = consume(IDENTIFIER, "Expect variable name.");
+
+    std::shared_ptr<Expr> initializer = nullptr;
+    if (match({EQUAL})) {
+        initializer = expression();
+    }
+
+    consume(SEMICOLON, "Expect ';' after variable declaration.");
+    return std::make_shared<Var>(name, initializer);
 }
 
 

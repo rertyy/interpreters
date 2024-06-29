@@ -1,11 +1,14 @@
 #include <any>
 #include "../include/lox/Stmt.h"
 
-std::any Expression::accept(const Visitor &visitor) const {
+std::any Expression::accept(Visitor &visitor) {
     return visitor.visitExpressionStmt(*this);
 }
 
-std::any Print::accept(const Visitor &visitor) const {
+std::any Print::accept(Visitor &visitor) {
     return visitor.visitPrintStmt(*this);
 }
 
+std::any Var::accept(Visitor &visitor) {
+    return visitor.visitVarStmt(*this);
+}

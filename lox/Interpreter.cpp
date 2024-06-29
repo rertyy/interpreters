@@ -6,19 +6,19 @@
 
 using enum TokenType;
 
-std::any Interpreter::visitLiteralExpr(const Literal &expr) const {
+std::any Interpreter::visitLiteralExpr( Literal &expr)  {
     return expr.value;
 }
 
-std::any Interpreter::visitGroupingExpr(const Grouping &expr) const {
+std::any Interpreter::visitGroupingExpr( Grouping &expr)  {
     return evaluate(*expr.expression);
 }
 
-std::any Interpreter::evaluate(const Expr &expr) const {
+std::any Interpreter::evaluate( Expr &expr)  {
     return expr.accept(*this);
 }
 
-std::any Interpreter::visitUnaryExpr(const Unary &expr) const {
+std::any Interpreter::visitUnaryExpr( Unary &expr)  {
     std::any right = evaluate(*expr.right);
 
     switch (expr.op.type) {
@@ -31,6 +31,10 @@ std::any Interpreter::visitUnaryExpr(const Unary &expr) const {
     }
 }
 
+std::any Interpreter::visitVariableExpr( Variable &expr)  {
+    return environment.get(expr.name);
+}
+
 bool Interpreter::isTruthy(const std::any &object) const {
     if (object.type() == typeid(bool)) {
         return std::any_cast<bool>(object);
@@ -38,7 +42,7 @@ bool Interpreter::isTruthy(const std::any &object) const {
     return object.type() != typeid(std::nullptr_t);
 }
 
-std::any Interpreter::visitBinaryExpr(const Binary &expr) const {
+std::any Interpreter::visitBinaryExpr( Binary &expr)  {
     std::any left = evaluate(*expr.left);
     std::any right = evaluate(*expr.right);
 
@@ -100,7 +104,7 @@ void Interpreter::checkNumberOperands(const Token &op, const std::any &left, con
     throw RuntimeError(op, "Operands must be numbers");
 }
 
-void Interpreter::interpret(const Expr &expr) const {
+void Interpreter::interpret(Expr &expr)  {
     try {
         std::any value = evaluate(expr);
         std::cout << castAnyToString(value) << std::endl;
@@ -109,7 +113,7 @@ void Interpreter::interpret(const Expr &expr) const {
     }
 }
 
-void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements) const {
+void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> &statements)  {
     try {
         for (const std::shared_ptr<Stmt>& stmt: statements) {
             execute(*stmt);
@@ -120,18 +124,28 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements
 
 }
 
-void Interpreter::execute(const Stmt & stmt) const {
+void Interpreter::execute( Stmt & stmt) {
     stmt.accept(*this);
 }
 
 
-std::any Interpreter::visitExpressionStmt(const Expression &stmt) const {
+std::any Interpreter::visitExpressionStmt( Expression &stmt)  {
     evaluate(*stmt.expression);
     return nullptr;
 }
 
-std::any Interpreter::visitPrintStmt(const Print &stmt) const {
+std::any Interpreter::visitPrintStmt( Print &stmt)  {
     std::any value = evaluate(*stmt.expression);
     std::cout << castAnyToString(value) << std::endl;
+    return nullptr;
+}
+
+std::any Interpreter::visitVarStmt( Var &stmt) {
+    std::any value = nullptr;
+    if (stmt.initializer != nullptr) {
+        value = evaluate(*stmt.initializer);
+    }
+
+    environment.define(stmt.name.lexeme, value);
     return nullptr;
 }

@@ -33,4 +33,6 @@ add_executable(interpreters
         include/lox/RuntimeError.h
         include/lox/Stmt.h
         lox/Stmt.cpp
+        lox/Environment.cpp
+        include/lox/Environment.h
 )

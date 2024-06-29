@@ -17,7 +17,7 @@ void GenerateAST::main(int argc, char **argv) {
     defineAST(codeOutputDir, headerOutputDir, "Expr", {
             "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
             "Grouping : std::shared_ptr<Expr> expression",
-            "Literal  : std::string value",
+            "Literal  : const std::any value",
             "Unary    : Token op, std::shared_ptr<Expr> right"
             "Variable : Token name"
     });
@@ -66,12 +66,11 @@ void GenerateAST::defineASTCode(const std::string &outputDir, const std::string 
     writer << std::endl;
 
     for (const auto &[className, fields]: typesVec) {
-        writer << "std::any " << className << "::accept(const Visitor &visitor) const {" << std::endl;
+        writer << "std::any " << className << "::accept(Visitor &visitor) {" << std::endl;
         writer << "    return visitor.visit" << className << baseName << "(*this);" << std::endl;
         writer << "}" << std::endl;
         writer << std::endl;
     }
-
 
     if (writer.fail()) {
         std::cerr << "Error occurred while writing to file: " << path << std::endl;
@@ -103,6 +102,7 @@ void GenerateAST::defineASTHeader(const std::string &outputDir, const std::strin
     writer << "#include <any>" << std::endl;
     writer << "#include <memory>" << std::endl;
     writer << "#include \"Token.h\"" << std::endl;
+    writer << "#include \"Expr.h\"" << std::endl;
     writer << std::endl;
 
     // Forward declarations
@@ -134,7 +134,9 @@ void GenerateAST::defineBaseClass(std::ofstream &writer, const std::string &base
     writer << "class " << baseName << " {" << std::endl;
     writer << "public:" << std::endl;
     writer << "    class Visitor;" << std::endl;
+    writer << std::endl;
     writer << "    virtual ~" << baseName << "() = default;" << std::endl;
+    writer << std::endl;
     writer << "    virtual std::any accept(Visitor &visitor) = 0;" << std::endl;
     writer << "};" << std::endl;
     writer << std::endl;
@@ -146,8 +148,10 @@ GenerateAST::defineVisitor(std::ofstream &writer, const std::string &baseName,
     writer << "class " << baseName << "::Visitor {" << std::endl;
     writer << "public:" << std::endl;
     for (const auto &[className, fieldName]: typesVec) {
-        writer << "    virtual std::any visit" << className << baseName << "(const " << className << " &expr) = 0;"
+        writer << "    virtual std::any visit" << className << baseName << "( " << className
+               << " &expr) = 0;"
                << std::endl;
+        writer << std::endl;
     }
     writer << "};" << std::endl;
     writer << std::endl;

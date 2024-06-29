@@ -1,18 +1,22 @@
 #include <any>
 #include "../include/lox/Expr.h"
 
-std::any Binary::accept(const Visitor &visitor) const {
+std::any Binary::accept(Visitor &visitor) {
     return visitor.visitBinaryExpr(*this);
 }
 
-std::any Grouping::accept(const Visitor &visitor) const {
+std::any Grouping::accept(Visitor &visitor) {
     return visitor.visitGroupingExpr(*this);
 }
 
-std::any Literal::accept(const Visitor &visitor) const {
+std::any Literal::accept(Visitor &visitor) {
     return visitor.visitLiteralExpr(*this);
 }
 
-std::any Unary::accept(const Visitor &visitor) const {
+std::any Unary::accept(Visitor &visitor) {
     return visitor.visitUnaryExpr(*this);
+}
+
+std::any Variable::accept(Expr::Visitor &visitor) {
+    return visitor.visitVariableExpr(*this);
 }
