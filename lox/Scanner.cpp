@@ -190,7 +190,7 @@ char Scanner::peekNext() {
 void Scanner::identifier() {
     while (isAlphaNumeric(peek())) advance();
 
-    std::string text = source.substr(start, current);
+    std::string text = source.substr(start, current - start);
     auto keywordIt = keywords.find(text);
     TokenType type = (keywordIt != keywords.end()) ? keywordIt->second : IDENTIFIER;
 

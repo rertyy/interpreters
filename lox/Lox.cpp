@@ -27,12 +27,6 @@ void Lox::main(int argc, char *argv[]) {
 
 
 void Lox::runFile(const std::string &path) {
-    if (hadError) {
-        exit(65);
-    }
-    if (hadRuntimeError) {
-        exit(70);
-    }
     std::ifstream file(path);
     if (!file) {
         std::cerr << "Could not open file: " << path << std::endl;
@@ -40,7 +34,9 @@ void Lox::runFile(const std::string &path) {
     }
     std::stringstream buffer;
     buffer << file.rdbuf();
+    std::cout << "=== Input Begin === " << std::endl;
     std::cout << buffer.str() << std::endl;
+    std::cout << "=== Input End === " << std::endl;
     run(buffer.str());
 }
 
@@ -76,9 +72,11 @@ void Lox::run(const std::string &source) {
     Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
 
+    std::cout << "=== Tokens Begin ===" << std::endl;
     for (const Token &token: tokens) {
         std::cout << token.toString() << std::endl;
     }
+    std::cout << "=== Tokens End ===" << std::endl;
 
     Parser parser{tokens};
     std::vector<std::shared_ptr<Stmt>> statements = parser.parse();

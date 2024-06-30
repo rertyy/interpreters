@@ -135,7 +135,7 @@ Token &Parser::consume(TokenType type, const std::string &message) {
 
 Parser::ParseError Parser::error(const Token &token, const std::string &message) {
     Lox::error(token, message);
-    return ParseError{};
+    throw ParseError{};
 }
 
 // Checks until statement boundary before synchronizing state for error handling
@@ -175,8 +175,8 @@ std::vector<std::shared_ptr<Stmt>> Parser::parse() {
         try {
             statements.emplace_back(declaration());
         } catch (const ParseError &error) {
+            std::cout << "error found" << std::endl;
             Lox::hadError = true;
-            synchronize();
         }
     }
     return statements;
@@ -211,7 +211,7 @@ std::shared_ptr<Stmt> Parser::declaration() {
         return statement();
     } catch (const ParseError &error) {
         synchronize();
-        return {};
+        return nullptr;
     }
 }
 
