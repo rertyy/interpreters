@@ -93,6 +93,19 @@ std::any Interpreter::visitBinaryExpr(Binary &expr) {
     }
 }
 
+
+std::any Interpreter::visitTernaryExpr(Ternary &expr) {
+    if (expr.op1.type == QUESTION && expr.op2.type == COLON) {
+        std::any condition = evaluate(*expr.left);
+        if (isTruthy(condition)) {
+            return evaluate(*expr.middle);
+        } else {
+            return evaluate(*expr.right);
+        }
+    }
+    return nullptr;
+}
+
 bool Interpreter::isEqual(const std::any &a, const std::any &b) const {
     return ::isEquals(a, b);
 }
@@ -184,3 +197,4 @@ void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>>& stateme
     }
     this->environment = previous;
 }
+

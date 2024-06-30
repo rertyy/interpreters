@@ -36,6 +36,10 @@ std::any AstPrinter::visitVariableExpr(Variable &expr) {
     return expr.name.lexeme;
 }
 
+std::any AstPrinter::visitTernaryExpr(Ternary &expr) {
+    return parenthesize("ternary", expr.left, expr.middle, expr.right);
+}
+
 std::any AstPrinter::visitAssignExpr(Assign &expr) {
     const std::string name = "= " + expr.name.lexeme;
     return parenthesize(name, expr.value);

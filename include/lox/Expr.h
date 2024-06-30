@@ -16,6 +16,8 @@ class Literal;
 
 class Unary;
 
+class Ternary;
+
 class Variable;
 
 class Expr {
@@ -41,6 +43,8 @@ public:
 
     virtual std::any visitVariableExpr(Variable &expr) = 0;
 
+    virtual std::any visitTernaryExpr(Ternary &expr) = 0;
+
 };
 
 class Assign : public Expr {
@@ -59,6 +63,21 @@ public:
 
     std::shared_ptr<Expr> left;
     Token op;
+    std::shared_ptr<Expr> right;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+// I added this!
+class Ternary : public Expr {
+public:
+    Ternary(std::shared_ptr<Expr> left, Token op1, std::shared_ptr<Expr> middle, Token op2,
+            std::shared_ptr<Expr> right);
+
+    std::shared_ptr<Expr> left;
+    Token op1;
+    std::shared_ptr<Expr> middle;
+    Token op2;
     std::shared_ptr<Expr> right;
 
     std::any accept(Visitor &visitor) override;

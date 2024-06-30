@@ -2,4 +2,8 @@ var x = 1;
 var y = 2;
 var z = 5;
 x = 10 ? y = 11 : z = 12;
+x = 15, y = 16, z = 17 ? 18 : 19;
 
+print x;
+print y;
+print z;

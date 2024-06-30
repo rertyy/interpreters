@@ -20,6 +20,8 @@ public:
 
     std::any visitBinaryExpr(Binary &expr) override;
 
+    std::any visitTernaryExpr(Ternary &expr) override;
+
     std::any visitVariableExpr(Variable &expr) override;
 
     std::any visitAssignExpr(Assign &expr) override;

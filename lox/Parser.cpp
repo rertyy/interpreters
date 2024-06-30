@@ -45,7 +45,7 @@ std::shared_ptr<Expr> Parser::expression() {
 // I added this! This is a comma operator for CPP which has left-to-right associativity
 // and has lower precedence than assignment
 std::shared_ptr<Expr> Parser::commaOperator() {
-    std::shared_ptr<Expr> expr = assignment();
+    std::shared_ptr<Expr> expr = ternary();
 
     while (match({COMMA})) {
         Token &op = previous();
@@ -108,6 +108,21 @@ std::shared_ptr<Expr> Parser::unary() {
         return std::make_shared<Unary>(op, right);
     }
     return primary();
+}
+
+std::shared_ptr<Expr> Parser::ternary() {
+    std::shared_ptr<Expr> expr = assignment();
+    if (match({QUESTION})) {
+        Token &op1 = previous();
+        std::shared_ptr<Expr> thenExpr = assignment();
+        consume(COLON, "Expect ':' after expression.");
+        Token &op2 = previous();
+        std::shared_ptr<Expr> elseExpr = ternary();
+        return std::make_shared<Ternary>(expr, op1,
+                                         thenExpr, op2,
+                                         elseExpr);
+    }
+    return expr;
 }
 
 std::shared_ptr<Expr> Parser::primary() {

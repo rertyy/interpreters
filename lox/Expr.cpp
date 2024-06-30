@@ -39,3 +39,10 @@ std::any Variable::accept(Visitor &visitor) {
     return visitor.visitVariableExpr(*this);
 }
 
+Ternary::Ternary(std::shared_ptr<Expr> left, Token op1, std::shared_ptr<Expr> middle, Token op2,
+                 std::shared_ptr<Expr> right) : left(std::move(left)), op1(std::move(op1)), middle(std::move(middle)),
+                                                op2(std::move(op2)), right(std::move(right)) {}
+
+std::any Ternary::accept(Expr::Visitor &visitor) {
+    return visitor.visitTernaryExpr(*this);
+}

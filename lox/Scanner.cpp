@@ -105,6 +105,12 @@ void Scanner::scanToken() {
         case '"':
             string();
             break;
+        case '?':
+            addToken(QUESTION);
+            break;
+        case ':':
+            addToken(COLON);
+            break;
         default:
             if (isDigit(c)) {
                 number();

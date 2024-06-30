@@ -16,9 +16,12 @@ public:
 
     std::any visitUnaryExpr(Unary &expr) override;
 
+    std::any visitTernaryExpr(Ternary &expr) override;
+
     std::any visitVariableExpr(Variable &expr) override;
 
     std::any visitAssignExpr(Assign &expr) override;
+
 
     /**
      * @brief Parenthesize the given expressions into Polish notation
