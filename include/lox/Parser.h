@@ -48,7 +48,7 @@ enum TokenType;
 
 class Parser {
 public:
-    explicit Parser(std::vector<Token> tokens) : tokens(std::move(tokens)) {}
+    explicit Parser(std::vector<Token> tokens);
 
     class ParseError : public std::runtime_error {
     public:

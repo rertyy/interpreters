@@ -4,6 +4,10 @@
 2. Parse tokens into token tree
 3. Evaluate token tree
 
+### Scanner
+
+* Scanner is basically just a massive switch case.
+
 ### Visitor pattern for Expr.
 
 * Visitor pattern is declared within Expr hierarchy because other classes have their own Visitor as well.
@@ -33,7 +37,8 @@ Since I primarily did this to learn C++ and I didn't want to just copy-paste cod
 Java.
 
 * Use `->` rather than `.` to use the reference (C++ is pass-by-value by default)
-* Use of shared_ptr since there may be multiple usages of the same object (RAII)
+* Use of shared_ptr since there may be multiple usages of the same object (RAII). Being very careful of accidentally
+  using `new` or `.` operators.
 * Const methods means the method doesn't change the object's state
     * I removed const methods because some of the visitor
       methods (`Interpreter::visitVarStmt`, `Interpreter::visitAssignExpr`) do mutate

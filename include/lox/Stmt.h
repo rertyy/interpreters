@@ -19,8 +19,6 @@ class Stmt {
 public:
     class Visitor;
 
-    virtual ~Stmt() = default;
-
     virtual std::any accept(Visitor &visitor) = 0;
 };
 
@@ -38,7 +36,7 @@ public:
 
 class Block : public Stmt {
 public:
-    explicit Block(std::vector<std::shared_ptr<Stmt>> statements) : statements(std::move(statements)) {}
+    explicit Block(std::vector<std::shared_ptr<Stmt>> statements);
 
     std::vector<std::shared_ptr<Stmt>> statements;
 
@@ -47,7 +45,7 @@ public:
 
 class Expression : public Stmt {
 public:
-    explicit Expression(std::shared_ptr<Expr> expression) : expression(std::move(expression)) {}
+    explicit Expression(std::shared_ptr<Expr> expression);
 
     std::shared_ptr<Expr> expression;
 
@@ -56,7 +54,7 @@ public:
 
 class Print : public Stmt {
 public:
-    explicit Print(std::shared_ptr<Expr> expression) : expression(std::move(expression)) {}
+    explicit Print(std::shared_ptr<Expr> expression);
 
     std::shared_ptr<Expr> expression;
 
@@ -65,8 +63,7 @@ public:
 
 class Var : public Stmt {
 public:
-    explicit Var(Token name, std::shared_ptr<Expr> initializer) : name(std::move(name)),
-                                                                  initializer(std::move(initializer)) {}
+    explicit Var(Token name, std::shared_ptr<Expr> initializer);
 
     Token name;
     std::shared_ptr<Expr> initializer;

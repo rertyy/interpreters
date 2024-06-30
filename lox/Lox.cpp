@@ -83,7 +83,7 @@ void Lox::run(const std::string &source) {
     std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
     if (hadError) return;
 
-    interpreter.interpret(statements); // I think it's being copied here
+    interpreter.interpret(statements);
     std::cout << "=== Output End ===" << std::endl;
 }
 

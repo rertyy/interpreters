@@ -1,6 +1,5 @@
 #include "../include/utils/utils.h"
 
-
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -27,8 +26,8 @@ std::string ltrim(const std::string &s) {
     return (start == std::string::npos) ? "" : s.substr(start);
 }
 
-std::string rtrim(const std::string &s) {
-    size_t end = s.find_last_not_of(" \t");
+std::string rtrim(const std::string &s, const std::string &charsToRemove = " \t") {
+    size_t end = s.find_last_not_of(charsToRemove);
     return (end == std::string::npos) ? "" : s.substr(0, end + 1);
 }
 
@@ -44,6 +43,9 @@ std::string castAnyToString(const std::any &value) {
         return std::any_cast<std::string>(value);
     } else if (isNumber(value)) {
         std::string doubleString = std::to_string(std::any_cast<double>(value));
+        // Remove trailing 0 and decimal point
+        doubleString = rtrim(doubleString, "0");
+        doubleString = rtrim(doubleString, ".");
         if (doubleString.size() >= 2 && doubleString.substr(doubleString.size() - 2) == ".0") {
             return doubleString.substr(0, doubleString.size() - 2);
         } else {

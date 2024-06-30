@@ -39,7 +39,7 @@ public:
      */
     void interpret(Expr &expr);
 
-    void interpret(std::vector<std::shared_ptr<Stmt>> &statements);
+    void interpret(const std::vector<std::shared_ptr<Stmt>> &statements);
 
 private:
 

@@ -1,6 +1,10 @@
 #include "../include/lox/Environment.h"
 #include "../include/lox/TokenType.h"
 
+
+Environment::Environment(std::shared_ptr<Environment> enclosing) : enclosing(std::move(enclosing)) {}
+
+
 void Environment::define(const std::string &name, const std::any &value) {
     values[name] = value;
 

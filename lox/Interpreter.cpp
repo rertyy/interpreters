@@ -117,7 +117,7 @@ void Interpreter::interpret(Expr &expr) {
     }
 }
 
-void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> &statements) {
+void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements) {
     try {
         for (const std::shared_ptr<Stmt> &stmt: statements) {
             execute(*stmt);
@@ -182,5 +182,5 @@ void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>>& stateme
         this->environment = previous;
         Lox::runtimeError(e);
     }
-    this->environment = std::move(previous);
+    this->environment = previous;
 }

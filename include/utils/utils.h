@@ -9,7 +9,7 @@ std::vector<std::string> split(const std::string &str, const std::string &delimi
 
 std::string ltrim(const std::string &s);
 
-std::string rtrim(const std::string &s);
+std::string rtrim(const std::string &s, const std::string &charsToRemove);
 
 std::string trim(const std::string &s);
 

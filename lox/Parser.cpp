@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../include/lox/Parser.h"
 
+Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)), current(0) {}
 
 bool Parser::match(const std::vector<TokenType> &types) {
     bool it = std::ranges::any_of(types, [this](const TokenType &type) {

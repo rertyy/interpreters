@@ -45,7 +45,7 @@ public:
 
 class Assign : public Expr {
 public:
-    explicit Assign(Token name, std::shared_ptr<Expr> value) : name(std::move(name)), value(std::move(value)) {}
+    explicit Assign(Token name, std::shared_ptr<Expr> value);
 
     Token name;
     std::shared_ptr<Expr> value;
@@ -55,9 +55,7 @@ public:
 
 class Binary : public Expr {
 public:
-    explicit Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left(std::move(left)),
-                                                                                         op(std::move(op)),
-                                                                                         right(std::move(right)) {}
+    explicit Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right);
 
     std::shared_ptr<Expr> left;
     Token op;
@@ -68,7 +66,7 @@ public:
 
 class Grouping : public Expr {
 public:
-    explicit Grouping(std::shared_ptr<Expr> expression) : expression(std::move(expression)) {}
+    explicit Grouping(std::shared_ptr<Expr> expression);
 
     std::shared_ptr<Expr> expression;
 
@@ -77,7 +75,7 @@ public:
 
 class Literal : public Expr {
 public:
-    explicit Literal(std::any value) : value(std::move(value)) {}
+    explicit Literal(std::any value);
 
     std::any value;
 
@@ -86,7 +84,7 @@ public:
 
 class Unary : public Expr {
 public:
-    explicit Unary(Token op, std::shared_ptr<Expr> right) : op(std::move(op)), right(std::move(right)) {}
+    explicit Unary(Token op, std::shared_ptr<Expr> right);
 
     Token op;
     std::shared_ptr<Expr> right;
@@ -96,7 +94,7 @@ public:
 
 class Variable : public Expr {
 public:
-    explicit Variable(Token name) : name(std::move(name)) {}
+    explicit Variable(Token name);
 
     Token name;
 

@@ -13,7 +13,7 @@ public:
 
     Environment() = default;
 
-    explicit Environment(std::shared_ptr<Environment> enclosing) : enclosing(std::move(enclosing)) {}
+    explicit Environment(std::shared_ptr<Environment> enclosing);
 
     std::shared_ptr<Environment> enclosing;
 
