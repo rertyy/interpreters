@@ -78,11 +78,13 @@ void Lox::run(const std::string &source) {
     }
     std::cout << "=== Tokens End ===" << std::endl;
 
+    std::cout << "=== Output Begin ===" << std::endl;
     Parser parser{tokens};
     std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
     if (hadError) return;
 
     interpreter.interpret(statements); // I think it's being copied here
+    std::cout << "=== Output End ===" << std::endl;
 }
 
 void Lox::error(int line, const std::string &message) {

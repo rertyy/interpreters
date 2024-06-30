@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 #include "../include/lox/Interpreter.h"
 #include "../include/utils/utils.h"
 #include "../include/lox/RuntimeError.h"
@@ -33,7 +34,7 @@ std::any Interpreter::visitUnaryExpr(Unary &expr) {
 }
 
 std::any Interpreter::visitVariableExpr(Variable &expr) {
-    return environment.get(expr.name);
+    return environment->get(expr.name);
 }
 
 bool Interpreter::isTruthy(const std::any &object) const {
@@ -119,10 +120,6 @@ void Interpreter::interpret(Expr &expr) {
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> &statements) {
     try {
         for (const std::shared_ptr<Stmt> &stmt: statements) {
-            if (stmt == nullptr) {
-                // hack around empty expressions e.g. ;;;
-                continue;
-            }
             execute(*stmt);
         }
     } catch (const RuntimeError &e) {
@@ -153,33 +150,37 @@ std::any Interpreter::visitVarStmt(Var &stmt) {
         value = evaluate(*stmt.initializer);
     }
 
-    environment.define(stmt.name.lexeme, value);
+    environment->define(stmt.name.lexeme, value);
     return nullptr;
 }
 
 std::any Interpreter::visitAssignExpr(Assign &expr) {
     std::any value = evaluate(*expr.value);
-    environment.assign(expr.name, value);
+    environment->assign(expr.name, value);
     return value;
 }
 
 std::any Interpreter::visitBlockStmt(Block &stmt) {
-    executeBlock(stmt.statements, Environment{environment});
+    executeBlock(stmt.statements, std::make_shared<Environment>(environment));
     return nullptr;
 }
 
-void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements,
-                               const Environment &environment) {
-    const Environment &previous = this->environment;
+void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>>& statements,
+                               const std::shared_ptr<Environment> &executionEnvironment) {
+    std::shared_ptr<Environment> previous = this->environment;
 
-    // The more common way to do it is to pass an environment parameter to each visit method
+    // The more common way to do it is to pass an executionEnvironment parameter to each visit method
     try {
-        this->environment = Environment{environment};
+        this->environment = executionEnvironment;
         for (const auto &statement: statements) {
+            if (statement == nullptr) {
+                continue;
+            }
             execute(*statement);
         }
-    } catch (const std::exception &e) {
-
+    } catch (const RuntimeError &e) {
+        this->environment = previous;
+        Lox::runtimeError(e);
     }
-    this->environment = previous;
+    this->environment = std::move(previous);
 }

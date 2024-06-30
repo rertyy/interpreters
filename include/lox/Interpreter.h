@@ -9,6 +9,8 @@
 // Class for evaluating expressions
 class Interpreter : public virtual Expr::Visitor, public virtual Stmt::Visitor {
 public:
+    Interpreter() : environment(std::make_shared<Environment>()) {}
+
     // Expression visitors
     std::any visitLiteralExpr(Literal &expr) override;
 
@@ -41,7 +43,7 @@ public:
 
 private:
 
-    Environment environment;
+    std::shared_ptr<Environment> environment;
 
     // Evaluate an expression
     std::any evaluate(Expr &expr);
@@ -61,7 +63,8 @@ private:
 
     void checkNumberOperands(const Token &op, const std::any &left, const std::any &right) const;
 
-    void executeBlock(std::vector<std::shared_ptr<Stmt>> vector1, const Environment &environment);
+    void executeBlock(const std::vector<std::shared_ptr<Stmt>> &statements,
+                      const std::shared_ptr<Environment> &executionEnvironment);
 };
 
 
