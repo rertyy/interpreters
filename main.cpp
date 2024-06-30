@@ -31,6 +31,7 @@ void codegen() {
 int main(int argc, char *argv[]) {
 //    codegen();
 //    testAst();
-    Lox::main(argc, argv);
+    Lox::runFile("/home/ian/interpreters/runfiles.txt");
+//    Lox::main(argc, argv);
     return 0;
 }

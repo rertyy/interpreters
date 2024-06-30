@@ -11,3 +11,7 @@ std::string Token::toString() const {
     return ::tokenTypeToString(type) + " " + lexeme + " " + std::to_string(line);
 }
 
+std::ostream &operator<<(std::ostream &os, const Token &token) {
+    return os << token.toString();
+}
+

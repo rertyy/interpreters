@@ -4,21 +4,22 @@
 #include "../include/lox/RuntimeError.h"
 #include "../include/lox/Lox.h"
 
-using enum TokenType;
+using
+enum TokenType;
 
-std::any Interpreter::visitLiteralExpr( Literal &expr)  {
+std::any Interpreter::visitLiteralExpr(Literal &expr) {
     return expr.value;
 }
 
-std::any Interpreter::visitGroupingExpr( Grouping &expr)  {
+std::any Interpreter::visitGroupingExpr(Grouping &expr) {
     return evaluate(*expr.expression);
 }
 
-std::any Interpreter::evaluate( Expr &expr)  {
+std::any Interpreter::evaluate(Expr &expr) {
     return expr.accept(*this);
 }
 
-std::any Interpreter::visitUnaryExpr( Unary &expr)  {
+std::any Interpreter::visitUnaryExpr(Unary &expr) {
     std::any right = evaluate(*expr.right);
 
     switch (expr.op.type) {
@@ -31,7 +32,7 @@ std::any Interpreter::visitUnaryExpr( Unary &expr)  {
     }
 }
 
-std::any Interpreter::visitVariableExpr( Variable &expr)  {
+std::any Interpreter::visitVariableExpr(Variable &expr) {
     return environment.get(expr.name);
 }
 
@@ -42,7 +43,7 @@ bool Interpreter::isTruthy(const std::any &object) const {
     return object.type() != typeid(std::nullptr_t);
 }
 
-std::any Interpreter::visitBinaryExpr( Binary &expr)  {
+std::any Interpreter::visitBinaryExpr(Binary &expr) {
     std::any left = evaluate(*expr.left);
     std::any right = evaluate(*expr.right);
 
@@ -91,7 +92,7 @@ std::any Interpreter::visitBinaryExpr( Binary &expr)  {
     }
 }
 
-bool Interpreter::isEqual(const std::any& a, const std::any& b) const {
+bool Interpreter::isEqual(const std::any &a, const std::any &b) const {
     return ::isEquals(a, b);
 }
 
@@ -106,7 +107,7 @@ void Interpreter::checkNumberOperands(const Token &op, const std::any &left, con
     throw RuntimeError(op, "Operands must be numbers");
 }
 
-void Interpreter::interpret(Expr &expr)  {
+void Interpreter::interpret(Expr &expr) {
     try {
         std::any value = evaluate(expr);
         std::cout << castAnyToString(value) << std::endl;
@@ -115,9 +116,13 @@ void Interpreter::interpret(Expr &expr)  {
     }
 }
 
-void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> &statements)  {
+void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> &statements) {
     try {
-        for (const std::shared_ptr<Stmt>& stmt: statements) {
+        for (const std::shared_ptr<Stmt> &stmt: statements) {
+            if (stmt == nullptr) {
+                // hack around empty expressions e.g. ;;;
+                continue;
+            }
             execute(*stmt);
         }
     } catch (const RuntimeError &e) {
@@ -126,23 +131,23 @@ void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> &statements)  {
 
 }
 
-void Interpreter::execute( Stmt & stmt) {
+void Interpreter::execute(Stmt &stmt) {
     stmt.accept(*this);
 }
 
 
-std::any Interpreter::visitExpressionStmt( Expression &stmt)  {
+std::any Interpreter::visitExpressionStmt(Expression &stmt) {
     evaluate(*stmt.expression);
     return nullptr;
 }
 
-std::any Interpreter::visitPrintStmt( Print &stmt)  {
+std::any Interpreter::visitPrintStmt(Print &stmt) {
     std::any value = evaluate(*stmt.expression);
     std::cout << castAnyToString(value) << std::endl;
     return nullptr;
 }
 
-std::any Interpreter::visitVarStmt( Var &stmt) {
+std::any Interpreter::visitVarStmt(Var &stmt) {
     std::any value = nullptr;
     if (stmt.initializer != nullptr) {
         value = evaluate(*stmt.initializer);
@@ -156,4 +161,25 @@ std::any Interpreter::visitAssignExpr(Assign &expr) {
     std::any value = evaluate(*expr.value);
     environment.assign(expr.name, value);
     return value;
+}
+
+std::any Interpreter::visitBlockStmt(Block &stmt) {
+    executeBlock(stmt.statements, Environment{environment});
+    return nullptr;
+}
+
+void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements,
+                               const Environment &environment) {
+    const Environment &previous = this->environment;
+
+    // The more common way to do it is to pass an environment parameter to each visit method
+    try {
+        this->environment = Environment{environment};
+        for (const auto &statement: statements) {
+            execute(*statement);
+        }
+    } catch (const std::exception &e) {
+
+    }
+    this->environment = previous;
 }

@@ -19,7 +19,10 @@ enum TokenType;
  * program        → statement* EOF ;
  *
  * statement      → exprStmt
- *                | printStmt ;
+ *                | printStmt
+ *                | block ;
+ *
+ * block          → "{" declaration* "}" ;
  *
  * exprStmt       → expression ";" ;
  * printStmt      → "print" expression ";" ;
@@ -53,9 +56,9 @@ public:
     };
 
 
-    std::shared_ptr<Expr> parse();
+    std::shared_ptr<Expr> parseExpr();
 
-    std::vector<std::shared_ptr<Stmt>> parseSequence();
+    std::vector<std::shared_ptr<Stmt>> parse();
 
 private:
     std::vector<Token> tokens;
@@ -132,6 +135,8 @@ private:
     std::shared_ptr<Stmt> declaration();
 
     std::shared_ptr<Stmt> varDeclaration();
+
+    std::vector<std::shared_ptr<Stmt>> block();
 };
 
 

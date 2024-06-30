@@ -40,6 +40,7 @@ void Lox::runFile(const std::string &path) {
     }
     std::stringstream buffer;
     buffer << file.rdbuf();
+    std::cout << buffer.str() << std::endl;
     run(buffer.str());
 }
 
@@ -63,7 +64,7 @@ void Lox::runExpr(const std::string &source) {
     }
 
     Parser parser{tokens};
-    std::shared_ptr<Expr> expression = parser.parse();
+    std::shared_ptr<Expr> expression = parser.parseExpr();
     if (hadError) return;
 
     AstPrinter printer;
@@ -80,7 +81,7 @@ void Lox::run(const std::string &source) {
     }
 
     Parser parser{tokens};
-    std::vector<std::shared_ptr<Stmt>> statements = parser.parseSequence();
+    std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
     if (hadError) return;
 
     interpreter.interpret(statements); // I think it's being copied here

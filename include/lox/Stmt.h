@@ -3,8 +3,11 @@
 
 #include <any>
 #include <memory>
+#include <vector>
 #include "Token.h"
 #include "Expr.h"
+
+class Block;
 
 class Expression;
 
@@ -23,12 +26,23 @@ public:
 
 class Stmt::Visitor {
 public:
+    virtual std::any visitBlockStmt(Block &expr) = 0;
+
     virtual std::any visitExpressionStmt(Expression &expr) = 0;
 
     virtual std::any visitPrintStmt(Print &expr) = 0;
 
     virtual std::any visitVarStmt(Var &expr) = 0;
 
+};
+
+class Block : public Stmt {
+public:
+    explicit Block(std::vector<std::shared_ptr<Stmt>> statements) : statements(std::move(statements)) {}
+
+    std::vector<std::shared_ptr<Stmt>> statements;
+
+    std::any accept(Visitor &visitor) override;
 };
 
 class Expression : public Stmt {

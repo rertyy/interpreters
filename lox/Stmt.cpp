@@ -1,6 +1,10 @@
 #include <any>
 #include "../include/lox/Stmt.h"
 
+std::any Block::accept(Visitor &visitor) {
+    return visitor.visitBlockStmt(*this);
+}
+
 std::any Expression::accept(Visitor &visitor) {
     return visitor.visitExpressionStmt(*this);
 }

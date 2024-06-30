@@ -23,6 +23,8 @@ public:
     std::any visitAssignExpr(Assign &expr) override;
 
     // Statement visitors
+    std::any visitBlockStmt(Block &stmt) override;
+
     std::any visitExpressionStmt(Expression &stmt) override;
 
     std::any visitPrintStmt(Print &stmt) override;
@@ -59,7 +61,7 @@ private:
 
     void checkNumberOperands(const Token &op, const std::any &left, const std::any &right) const;
 
-
+    void executeBlock(std::vector<std::shared_ptr<Stmt>> vector1, const Environment &environment);
 };
 
 

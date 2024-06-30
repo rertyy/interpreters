@@ -23,6 +23,7 @@ void GenerateAST::main(int argc, char **argv) {
             "Variable : Token name"
     });
     defineAST(codeOutputDir, headerOutputDir, "Stmt", {
+            "Block      : std::vector<std::shared_ptr<Stmt>> statements",
             "Expression : std::shared_ptr<Expr> expression",
             "Print      : std::shared_ptr<Expr> expression",
             "Var        : Token name, std::shared_ptr<Expr> initializer"
@@ -149,7 +150,7 @@ GenerateAST::defineVisitor(std::ofstream &writer, const std::string &baseName,
     writer << "class " << baseName << "::Visitor {" << std::endl;
     writer << "public:" << std::endl;
     for (const auto &[className, fieldName]: typesVec) {
-        writer << "    virtual std::any visit" << className << baseName << "( " << className
+        writer << "    virtual std::any visit" << className << baseName << "(" << className
                << " &expr) = 0;"
                << std::endl;
         writer << std::endl;

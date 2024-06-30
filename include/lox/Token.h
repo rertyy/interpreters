@@ -13,8 +13,9 @@ public:
 
     std::string toString() const;
 
-    // Friend declaration for operator<<
-//    friend std::ostream &operator<<(std::ostream &os, const Token &token);
+//     Friend declaration for operator<<
+    friend std::ostream &operator<<(std::ostream &os, const Token &token);
+
 
     const TokenType type;
     const std::string lexeme;

@@ -160,21 +160,22 @@ void Parser::synchronize() {
     }
 }
 
-std::shared_ptr<Expr> Parser::parse() {
+std::shared_ptr<Expr> Parser::parseExpr() {
     try {
         return expression();
-    } catch (ParseError &error) {
+    } catch (const ParseError &error) {
         Lox::hadError = true;
         return nullptr;
     }
 }
 
-std::vector<std::shared_ptr<Stmt>> Parser::parseSequence() {
+std::vector<std::shared_ptr<Stmt>> Parser::parse() {
     std::vector<std::shared_ptr<Stmt>> statements;
     while (!isAtEnd()) {
         try {
-            statements.push_back(declaration());
-        } catch (ParseError &error) {
+            statements.emplace_back(declaration());
+        } catch (const ParseError &error) {
+            Lox::hadError = true;
             synchronize();
         }
     }
@@ -182,7 +183,12 @@ std::vector<std::shared_ptr<Stmt>> Parser::parseSequence() {
 }
 
 std::shared_ptr<Stmt> Parser::statement() {
-    if (match({PRINT})) return printStatement();
+    if (match({PRINT})) {
+        return printStatement();
+    }
+    if (match({LEFT_BRACE})) {
+        return std::make_shared<Block>(block());
+    }
     return expressionStatement();
 }
 
@@ -203,7 +209,7 @@ std::shared_ptr<Stmt> Parser::declaration() {
     try {
         if (match({VAR})) return varDeclaration();
         return statement();
-    } catch (ParseError &error) {
+    } catch (const ParseError &error) {
         synchronize();
         return {};
     }
@@ -239,6 +245,17 @@ std::shared_ptr<Expr> Parser::assignment() {
         error(equals, "Invalid assignment target.");
     }
     return expr;
+}
+
+std::vector<std::shared_ptr<Stmt>> Parser::block() {
+    std::vector<std::shared_ptr<Stmt>> statements;
+
+    // isAtEnd() to ensure parser doesn't fail when there is no closing brace
+    while (!check(RIGHT_BRACE) && !isAtEnd()) {
+        statements.emplace_back(declaration());
+    }
+    consume(RIGHT_BRACE, "Expect '}' after block.");
+    return statements;
 }
 
 
