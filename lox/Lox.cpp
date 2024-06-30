@@ -34,9 +34,6 @@ void Lox::runFile(const std::string &path) {
     }
     std::stringstream buffer;
     buffer << file.rdbuf();
-    std::cout << "=== Input Begin === " << std::endl;
-    std::cout << buffer.str() << std::endl;
-    std::cout << "=== Input End === " << std::endl;
     run(buffer.str());
 }
 
@@ -47,25 +44,34 @@ void Lox::runPrompt() {
         std::cout << "> ";
         if (!std::getline(std::cin, line)) break;
         run(line);
-//        runExpr(line);
+//        runExprOnly(line);
     }
 }
 
-void Lox::runExpr(const std::string &source) {
+void Lox::runExprOnly(const std::string &source) {
     Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
 
+    std::cout << "=== Tokens Begin ===" << std::endl;
     for (const Token &token: tokens) {
         std::cout << token.toString() << std::endl;
     }
+    std::cout << "=== Tokens End ===" << std::endl;
+    std::cout << std::endl;
 
     Parser parser{tokens};
     std::shared_ptr<Expr> expression = parser.parseExpr();
     if (hadError) return;
 
+    std::cout << "=== Tree Begin ===" << std::endl;
     AstPrinter printer;
     std::cout << printer.print(*expression) << std::endl;
+    std::cout << "=== Tree End ===" << std::endl;
+    std::cout << std::endl;
+    std::cout << "=== Output Begin ===" << std::endl;
     interpreter.interpret(*expression);
+    std::cout << "=== Output End ===" << std::endl;
+
 }
 
 void Lox::run(const std::string &source) {
@@ -77,7 +83,7 @@ void Lox::run(const std::string &source) {
         std::cout << token.toString() << std::endl;
     }
     std::cout << "=== Tokens End ===" << std::endl;
-
+    std::cout << std::endl;
     std::cout << "=== Output Begin ===" << std::endl;
     Parser parser{tokens};
     std::vector<std::shared_ptr<Stmt>> statements = parser.parse();

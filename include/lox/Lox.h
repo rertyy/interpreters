@@ -20,7 +20,7 @@ public:
 
     static void run(const std::string &source);
 
-    static void runExpr(const std::string &source);
+    static void runExprOnly(const std::string &source);
 
 
     static void error(int line, const std::string &message);
