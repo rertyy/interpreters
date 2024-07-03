@@ -66,7 +66,7 @@ public:
 
 private:
     std::vector<Token> tokens;
-    int current = 0;
+    int current{0};
 
     /**
      * Check if the current token matches any of the given types, and advance if it does

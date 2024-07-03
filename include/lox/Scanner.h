@@ -19,9 +19,9 @@ public:
 private:
     const static std::unordered_map<std::string, TokenType> keywords;
 
-    int start = 0;
-    int current = 0;
-    int line = 1;
+    int start{0};
+    int current{0};
+    int line{1};
 
     const std::string source;
     std::vector<Token> tokens;
