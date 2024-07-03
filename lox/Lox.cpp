@@ -43,8 +43,12 @@ void Lox::runPrompt() {
     while (true) {
         std::cout << "> ";
         if (!std::getline(std::cin, line)) break;
-        run(line);
-//        runExprOnly(line);
+        if (line.ends_with(';')) {
+            run(line);
+        } else {
+            runExprOnly(line);
+        }
+        hadError = false;
     }
 }
 
