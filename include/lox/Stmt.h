@@ -66,7 +66,7 @@ public:
     explicit Var(Token name, std::shared_ptr<Expr> initializer);
 
     Token name;
-    std::shared_ptr<Expr> initializer;
+    std::shared_ptr<Expr> initializer; // The value the variable is initalised to
 
     std::any accept(Visitor &visitor) override;
 };

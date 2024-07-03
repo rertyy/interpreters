@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 #include <utility>
 #include "../include/lox/Interpreter.h"
 #include "../include/utils/utils.h"
@@ -158,7 +159,7 @@ std::any Interpreter::visitPrintStmt(Print &stmt) {
 }
 
 std::any Interpreter::visitVarStmt(Var &stmt) {
-    std::any value = nullptr;
+    std::optional<std::any> value = std::nullopt;
     if (stmt.initializer != nullptr) {
         value = evaluate(*stmt.initializer);
     }

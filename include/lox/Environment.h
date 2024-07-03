@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include "RuntimeError.h"
+#include <optional>
 
 class Environment {
 
@@ -20,12 +21,12 @@ public:
 
     std::any get(const Token &name) const;
 
-    void define(const std::string &name, const std::any &value);
+    void define(const std::string &name, const std::optional<std::any> &value);
 
     void assign(const Token &name, const std::any &value);
 
 private:
-    std::unordered_map<std::string, std::any> values;
+    std::unordered_map<std::string, std::optional<std::any>> values;
 
 
 };

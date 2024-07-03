@@ -6,7 +6,7 @@
 
 ### Scanner
 
-* Scanner is basically just a massive switch case.
+* Scanner is basically just a massive switch case using maximal munching
 
 ### Visitor pattern for Expr.
 
@@ -29,14 +29,24 @@
 
 * In `Parser.cpp`, start by parsing the lowest precedence operator before recursively parsing into the remaining
   operators.
-*
+* With the BNF grammar, basically one function per grammar rule.
+* Call the lowest precedence first (comma operator, then assignment, then equality, etc.)
+
+### Interpreter (Evaluation)
 
 # CPP Notes
 
 Since I primarily did this to learn C++ and I didn't want to just copy-paste code if it's Java, and C++ is similar to
 Java.
 
-* Use `->` rather than `.` to use the reference (C++ is pass-by-value by default)
+* TODO: refactor uses of `std::string` to `std::string_view` to get rid of temporary object copying accordingly
+
+* To build: https://stackoverflow.com/a/7859663
+    1. cd build
+    2. cmake ..
+    3. make
+    4. ./interpreters
+
 * Use of shared_ptr since there may be multiple usages of the same object (RAII). Being very careful of accidentally
   using `new` or `.` operators.
 * Const methods means the method doesn't change the object's state
