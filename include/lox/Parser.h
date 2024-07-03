@@ -19,9 +19,13 @@ enum TokenType;
  * program        → statement* EOF ;
  *
  * statement      → exprStmt
+ *                | ifStmt
  *                | printStmt
  *                | block ;
  *
+ * ifStmt         → "if" "(" expression ")" statement
+               ( "else" statement )? ;
+               *
  * block          → "{" declaration* "}" ;
  *
  * exprStmt       → expression ";" ;
@@ -125,6 +129,8 @@ private:
     std::shared_ptr<Expr> commaOperator();
 
     std::shared_ptr<Stmt> statement();
+
+    std::shared_ptr<Stmt> ifStatement();
 
     std::shared_ptr<Stmt> expressionStatement();
 

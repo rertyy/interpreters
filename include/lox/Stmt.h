@@ -11,6 +11,8 @@ class Block;
 
 class Expression;
 
+class If;
+
 class Print;
 
 class Var;
@@ -18,6 +20,8 @@ class Var;
 class Stmt {
 public:
     class Visitor;
+
+    virtual ~Stmt() = default;
 
     virtual std::any accept(Visitor &visitor) = 0;
 };
@@ -27,6 +31,8 @@ public:
     virtual std::any visitBlockStmt(Block &expr) = 0;
 
     virtual std::any visitExpressionStmt(Expression &expr) = 0;
+
+    virtual std::any visitIfStmt(If &expr) = 0;
 
     virtual std::any visitPrintStmt(Print &expr) = 0;
 
@@ -52,6 +58,17 @@ public:
     std::any accept(Visitor &visitor) override;
 };
 
+class If : public Stmt {
+public:
+    explicit If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch);
+
+    std::shared_ptr<Expr> condition;
+    std::shared_ptr<Stmt> thenBranch;
+    std::shared_ptr<Stmt> elseBranch;
+
+    std::any accept(Visitor &visitor) override;
+};
+
 class Print : public Stmt {
 public:
     explicit Print(std::shared_ptr<Expr> expression);
@@ -66,7 +83,7 @@ public:
     explicit Var(Token name, std::shared_ptr<Expr> initializer);
 
     Token name;
-    std::shared_ptr<Expr> initializer; // The value the variable is initalised to
+    std::shared_ptr<Expr> initializer;
 
     std::any accept(Visitor &visitor) override;
 };

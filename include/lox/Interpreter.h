@@ -31,6 +31,8 @@ public:
 
     std::any visitExpressionStmt(Expression &stmt) override;
 
+    std::any visitIfStmt(If &stmt) override;
+
     std::any visitPrintStmt(Print &stmt) override;
 
     std::any visitVarStmt(Var &stmt) override;

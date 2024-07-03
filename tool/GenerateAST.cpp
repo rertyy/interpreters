@@ -26,6 +26,7 @@ void GenerateAST::main(int argc, char **argv) {
     defineAST(codeOutputDir, headerOutputDir, "Stmt", {
             "Block      : std::vector<std::shared_ptr<Stmt>> statements",
             "Expression : std::shared_ptr<Expr> expression",
+            "If         : std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch",
             "Print      : std::shared_ptr<Expr> expression",
             "Var        : Token name, std::shared_ptr<Expr> initializer"
     });
@@ -69,6 +70,18 @@ void GenerateAST::defineASTCode(const std::string &outputDir, const std::string 
     writer << std::endl;
 
     for (const auto &[className, fields]: typesVec) {
+        writer << className << "::" << className << "(" << fields << ") : ";
+        std::vector<std::string> fieldsVec = split(fields, ", ");
+        for (size_t i = 0; i < fieldsVec.size(); ++i) {
+            std::string fieldName = split(fieldsVec[i], " ").back();
+            writer << fieldName << "(std::move(" << fieldName << "))";
+            if (i < fieldsVec.size() - 1) {
+                writer << ", ";
+            }
+        }
+        writer << " {}" << std::endl;
+        writer << std::endl;
+
         writer << "std::any " << className << "::accept(Visitor &visitor) {" << std::endl;
         writer << "    return visitor.visit" << className << baseName << "(*this);" << std::endl;
         writer << "}" << std::endl;
@@ -104,6 +117,7 @@ void GenerateAST::defineASTHeader(const std::string &outputDir, const std::strin
     // Imports
     writer << "#include <any>" << std::endl;
     writer << "#include <memory>" << std::endl;
+    writer << "#include <vector>" << std::endl;
     writer << "#include \"Token.h\"" << std::endl;
     writer << "#include \"Expr.h\"" << std::endl;
     writer << std::endl;
@@ -173,23 +187,14 @@ void GenerateAST::defineType(std::ofstream &writer, const std::string &baseName,
     writer << "public:" << std::endl;
 
     // Constructor
-    writer << "    explicit " << className << "(" << fields << ") : ";
-    std::vector<std::string> fieldsVec = split(fields, ", ");
-    for (size_t i = 0; i < fieldsVec.size(); ++i) {
-        std::string fieldName = split(fieldsVec[i], " ").back();
-        writer << fieldName << "(std::move(" << fieldName << "))";
-        if (i < fieldsVec.size() - 1) {
-            writer << ", ";
-        }
-    }
-    writer << " {}" << std::endl;
+    writer << "    explicit " << className << "(" << fields << ");" << std::endl;
     writer << std::endl;
 
     // Fields
+    std::vector<std::string> fieldsVec = split(fields, ", ");
     for (const auto &field: fieldsVec) {
         writer << "    " << field << ";" << std::endl;
     }
-
     writer << std::endl;
     writer << "    std::any accept(Visitor &visitor) override;" << std::endl;
     writer << "};" << std::endl;

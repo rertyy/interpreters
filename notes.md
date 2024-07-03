@@ -34,12 +34,17 @@
 
 ### Interpreter (Evaluation)
 
+* Dangling else problem
+
 # CPP Notes
 
 Since I primarily did this to learn C++ and I didn't want to just copy-paste code if it's Java, and C++ is similar to
 Java.
 
 * TODO: refactor uses of `std::string` to `std::string_view` to get rid of temporary object copying accordingly
+* TODO: `std::string_view` is a non-owning view of a string, so it's not a drop-in replacement for `std::string`
+* TODO: Refactor `match` and `consume` functions
+* TODO: add utils namespace to `utils` methods
 
 * To build: https://stackoverflow.com/a/7859663
     1. cd build

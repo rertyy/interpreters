@@ -152,6 +152,15 @@ std::any Interpreter::visitExpressionStmt(Expression &stmt) {
     return nullptr;
 }
 
+std::any Interpreter::visitIfStmt(If &stmt) {
+    if (isTruthy(evaluate(*stmt.condition))) {
+        execute(*stmt.thenBranch);
+    } else if (stmt.elseBranch != nullptr) {
+        execute(*stmt.elseBranch);
+    }
+    return nullptr;
+}
+
 std::any Interpreter::visitPrintStmt(Print &stmt) {
     std::any value = evaluate(*stmt.expression);
     std::cout << castAnyToString(value) << std::endl;
