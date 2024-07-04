@@ -17,6 +17,8 @@ class Grouping;
 
 class Literal;
 
+class Logical;
+
 class Unary;
 
 class Variable;
@@ -41,6 +43,8 @@ public:
     virtual std::any visitGroupingExpr(Grouping &expr) = 0;
 
     virtual std::any visitLiteralExpr(Literal &expr) = 0;
+
+    virtual std::any visitLogicalExpr(Logical &expr) = 0;
 
     virtual std::any visitUnaryExpr(Unary &expr) = 0;
 
@@ -98,6 +102,17 @@ public:
     explicit Literal(std::any value);
 
     std::any value;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class Logical : public Expr {
+public:
+    explicit Logical(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right);
+
+    std::shared_ptr<Expr> left;
+    Token op;
+    std::shared_ptr<Expr> right;
 
     std::any accept(Visitor &visitor) override;
 };

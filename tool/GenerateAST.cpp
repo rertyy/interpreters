@@ -20,6 +20,7 @@ void GenerateAST::main(int argc, char **argv) {
             "Ternary  : std::shared_ptr<Expr> left, Token op1, std::shared_ptr<Expr> middle, Token op2, std::shared_ptr<Expr> right",
             "Grouping : std::shared_ptr<Expr> expression",
             "Literal  : std::any value",
+            "Logical  : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
             "Unary    : Token op, std::shared_ptr<Expr> right",
             "Variable : Token name"
     });

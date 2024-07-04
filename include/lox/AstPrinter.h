@@ -14,6 +14,8 @@ public:
 
     std::any visitLiteralExpr(Literal &expr) override;
 
+    std::any visitLogicalExpr(Logical &expr) override;
+
     std::any visitUnaryExpr(Unary &expr) override;
 
     std::any visitTernaryExpr(Ternary &expr) override;

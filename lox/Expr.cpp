@@ -35,6 +35,14 @@ std::any Literal::accept(Visitor &visitor) {
     return visitor.visitLiteralExpr(*this);
 }
 
+Logical::Logical(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left(std::move(left)),
+                                                                                      op(std::move(op)),
+                                                                                      right(std::move(right)) {}
+
+std::any Logical::accept(Visitor &visitor) {
+    return visitor.visitLogicalExpr(*this);
+}
+
 Unary::Unary(Token op, std::shared_ptr<Expr> right) : op(std::move(op)), right(std::move(right)) {}
 
 std::any Unary::accept(Visitor &visitor) {

@@ -38,7 +38,9 @@ enum TokenType;
  *
  * expression     → assignment ;
  * assignment     → IDENTIFIER "=" assignment
- *                | equality ;
+ *                | logic_or ;
+ * logic_or       → logic_and ( "or" logic_and )* ;
+ * logic_and      → equality ( "and" equality )* ;
  * equality       → comparison ( ( "!=" | "==" ) comparison )* ;
  * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
  * term           → factor ( ( "-" | "+" ) factor )* ;
@@ -48,6 +50,8 @@ enum TokenType;
  * primary        → NUMBER | STRING | "true" | "false" | "nil"
  *                | "(" expression ")" ;
  */
+
+// The syntax doesn't care that "and", "or" expressions  short-circuit. That’s a semantic concern.
 
 
 class Parser {
@@ -135,6 +139,10 @@ private:
     std::shared_ptr<Stmt> expressionStatement();
 
     std::shared_ptr<Expr> assignment();
+
+    std::shared_ptr<Expr> logicalOr();
+
+    std::shared_ptr<Expr> logicalAnd();
 
     std::shared_ptr<Stmt> printStatement();
 

@@ -218,6 +218,7 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
 
     std::shared_ptr<Stmt> thenBranch = statement();
     std::shared_ptr<Stmt> elseBranch = nullptr;
+    // This match here means that else is tied to most recent if statement.
     if (match({ELSE})) {
         elseBranch = statement();
     }
@@ -261,7 +262,7 @@ std::shared_ptr<Stmt> Parser::varDeclaration() {
 
 // Because LHS and RHS are both valid expressions, run expressions on both LHS and RHS
 std::shared_ptr<Expr> Parser::assignment() {
-    std::shared_ptr<Expr> expr = equality();
+    std::shared_ptr<Expr> expr = logicalOr();
 
     if (match({EQUAL})) {
         Token &equals = previous(); // the l-value
@@ -278,6 +279,29 @@ std::shared_ptr<Expr> Parser::assignment() {
     }
     return expr;
 }
+
+std::shared_ptr<Expr> Parser::logicalOr() {
+    std::shared_ptr<Expr> expr = logicalAnd();
+
+    while (match({OR})) {
+        Token &op = previous();
+        std::shared_ptr<Expr> right = logicalAnd();
+        expr = std::make_shared<Logical>(expr, op, right);
+    }
+    return expr;
+}
+
+std::shared_ptr<Expr> Parser::logicalAnd() {
+    std::shared_ptr<Expr> expr = equality();
+
+    while (match({AND})) {
+        Token &op = previous();
+        std::shared_ptr<Expr> right = equality();
+        expr = std::make_shared<Logical>(expr, op, right);
+    }
+    return expr;
+}
+
 
 std::vector<std::shared_ptr<Stmt>> Parser::block() {
     std::vector<std::shared_ptr<Stmt>> statements;

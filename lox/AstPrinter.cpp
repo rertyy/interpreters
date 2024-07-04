@@ -28,6 +28,10 @@ std::any AstPrinter::visitLiteralExpr(Literal &expr) {
     return {};
 }
 
+std::any AstPrinter::visitLogicalExpr(Logical &expr) {
+    return parenthesize(expr.op.lexeme, expr.left, expr.right);
+}
+
 std::any AstPrinter::visitUnaryExpr(Unary &expr) {
     return parenthesize(expr.op.lexeme, expr.right);
 }
