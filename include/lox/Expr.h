@@ -73,7 +73,6 @@ public:
     std::any accept(Visitor &visitor) override;
 };
 
-// I added this!
 class Ternary : public Expr {
 public:
     explicit Ternary(std::shared_ptr<Expr> left, Token op1, std::shared_ptr<Expr> middle, Token op2,

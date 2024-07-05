@@ -17,6 +17,8 @@ class Print;
 
 class Var;
 
+class While;
+
 class Stmt {
 public:
     class Visitor;
@@ -37,6 +39,8 @@ public:
     virtual std::any visitPrintStmt(Print &expr) = 0;
 
     virtual std::any visitVarStmt(Var &expr) = 0;
+
+    virtual std::any visitWhileStmt(While &expr) = 0;
 
 };
 
@@ -84,6 +88,16 @@ public:
 
     Token name;
     std::shared_ptr<Expr> initializer;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class While : public Stmt {
+public:
+    explicit While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body);
+
+    std::shared_ptr<Expr> condition;
+    std::shared_ptr<Stmt> body;
 
     std::any accept(Visitor &visitor) override;
 };

@@ -32,3 +32,10 @@ std::any Var::accept(Visitor &visitor) {
     return visitor.visitVarStmt(*this);
 }
 
+While::While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body) : condition(std::move(condition)),
+                                                                            body(std::move(body)) {}
+
+std::any While::accept(Visitor &visitor) {
+    return visitor.visitWhileStmt(*this);
+}
+

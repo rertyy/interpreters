@@ -19,17 +19,21 @@ enum TokenType;
  * program        → statement* EOF ;
  *
  * statement      → exprStmt
+ *                | forStmt
  *                | ifStmt
  *                | printStmt
+ *                | whileStmt
  *                | block ;
  *
- * ifStmt         → "if" "(" expression ")" statement
-               ( "else" statement )? ;
-               *
- * block          → "{" declaration* "}" ;
- *
  * exprStmt       → expression ";" ;
+ * forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+ *                  expression? ";"
+ *                  expression? ")" statement ;
+ * ifStmt         → "if" "(" expression ")" statement
+ *                   ( "else" statement )? ;
  * printStmt      → "print" expression ";" ;
+ * whileStmt      → "while" "(" expression ")" statement ;
+ * block          → "{" declaration* "}" ;
  *
  * expression     → literal
  *                | unary
@@ -134,6 +138,8 @@ private:
 
     std::shared_ptr<Stmt> statement();
 
+    std::shared_ptr<Stmt> forStatement();
+
     std::shared_ptr<Stmt> ifStatement();
 
     std::shared_ptr<Stmt> expressionStatement();
@@ -149,6 +155,8 @@ private:
     std::shared_ptr<Stmt> declaration();
 
     std::shared_ptr<Stmt> varDeclaration();
+
+    std::shared_ptr<Stmt> whileStatement();
 
     std::vector<std::shared_ptr<Stmt>> block();
 

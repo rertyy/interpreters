@@ -189,6 +189,12 @@ std::any Interpreter::visitVarStmt(Var &stmt) {
     return nullptr;
 }
 
+std::any Interpreter::visitWhileStmt(While &stmt) {
+    while (isTruthy(evaluate(*stmt.condition))) {
+        execute(*stmt.body);
+    }
+}
+
 std::any Interpreter::visitAssignExpr(Assign &expr) {
     std::any value = evaluate(*expr.value);
     environment->assign(expr.name, value);

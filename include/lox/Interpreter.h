@@ -39,6 +39,8 @@ public:
 
     std::any visitVarStmt(Var &stmt) override;
 
+    std::any visitWhileStmt(While &stmt) override;
+
 
     /**
      * Entry point for interpreter methods

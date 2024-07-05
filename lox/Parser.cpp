@@ -199,17 +199,78 @@ std::vector<std::shared_ptr<Stmt>> Parser::parse() {
 }
 
 std::shared_ptr<Stmt> Parser::statement() {
+    if (match({FOR})) {
+        return forStatement();
+    }
     if (match({IF})) {
         return ifStatement();
     }
     if (match({PRINT})) {
         return printStatement();
     }
+    if (match({WHILE})) {
+        return whileStatement();
+    }
     if (match({LEFT_BRACE})) {
         return std::make_shared<Block>(block());
     }
     return expressionStatement();
 }
+
+std::shared_ptr<Stmt> Parser::forStatement() {
+    consume(LEFT_PAREN, "Expect '(' after 'for'.");
+
+    // ; or var i = 0; or i = 0;
+    std::shared_ptr<Stmt> initializer;
+    if (match({SEMICOLON})) {
+        initializer = nullptr;
+    } else if (match({VAR})) {
+        initializer = varDeclaration();
+    } else {
+        initializer = expressionStatement();
+    }
+
+    // i < condition; or ;
+    std::shared_ptr<Expr> condition = nullptr;
+    if (!check(SEMICOLON)) {
+        condition = expression();
+    }
+    consume(SEMICOLON, "Expect ';' after loop condition.");
+
+    // i++ or i = i + 1 or i = i - 1
+    std::shared_ptr<Expr> increment = nullptr;
+
+    if (!check(RIGHT_PAREN)) {
+        increment = expression();
+    }
+    consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+
+    // statement() includes support for block
+    std::shared_ptr<Stmt> body = statement();
+
+    // Make new syntax trees for the next loop
+    if (increment != nullptr) {
+        body = std::make_shared<Block>(
+                std::vector<std::shared_ptr<Stmt>>{
+                        body,
+                        std::make_shared<Expression>(increment)
+                }
+        );
+    }
+
+    // for (;;);
+    if (condition == nullptr) {
+        condition = std::make_shared<Literal>(true);
+    }
+    body = std::make_shared<While>(condition, body);
+
+
+    if (initializer != nullptr) {
+        body = std::make_shared<Block>(std::vector({initializer, body}));
+    }
+    return body;
+}
+
 
 std::shared_ptr<Stmt> Parser::ifStatement() {
     consume(LEFT_PAREN, "Expect '(' after 'if'.");
@@ -258,6 +319,16 @@ std::shared_ptr<Stmt> Parser::varDeclaration() {
 
     consume(SEMICOLON, "Expect ';' after variable declaration.");
     return std::make_shared<Var>(name, initializer);
+}
+
+std::shared_ptr<Stmt> Parser::whileStatement() {
+    consume(LEFT_PAREN, "Expect '(' after 'while'.");
+    std::shared_ptr<Expr> condition = expression();
+    consume(RIGHT_PAREN, "Expect ')' after condition.");
+    std::shared_ptr<Stmt> body = statement();
+
+    return std::make_shared<While>(condition, body);
+
 }
 
 // Because LHS and RHS are both valid expressions, run expressions on both LHS and RHS
