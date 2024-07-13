@@ -11,6 +11,8 @@ class Block;
 
 class Expression;
 
+class Function;
+
 class If;
 
 class Print;
@@ -33,6 +35,8 @@ public:
     virtual std::any visitBlockStmt(Block &expr) = 0;
 
     virtual std::any visitExpressionStmt(Expression &expr) = 0;
+
+    virtual std::any visitFunctionStmt(Function &expr) = 0;
 
     virtual std::any visitIfStmt(If &expr) = 0;
 
@@ -58,6 +62,17 @@ public:
     explicit Expression(std::shared_ptr<Expr> expression);
 
     std::shared_ptr<Expr> expression;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class Function : public Stmt {
+public:
+    explicit Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body);
+
+    Token name;
+    std::vector<Token> params;
+    std::vector<std::shared_ptr<Stmt>> body;
 
     std::any accept(Visitor &visitor) override;
 };

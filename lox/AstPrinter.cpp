@@ -49,6 +49,17 @@ std::any AstPrinter::visitAssignExpr(Assign &expr) {
     return parenthesize(name, expr.value);
 }
 
+std::any AstPrinter::visitCallExpr(Call &expr) {
+    std::string result = "(call " + std::any_cast<std::string>(expr.callee->accept(*this));
+
+    for (const auto &argument: expr.arguments) {
+        result += " " + std::any_cast<std::string>(argument->accept(*this));
+    }
+
+    result += ")";
+    return result;
+}
+
 template<typename... Exprs>
 std::string
 AstPrinter::parenthesize(const std::string &name,

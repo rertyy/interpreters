@@ -1,9 +1,11 @@
 #include "../include/utils/utils.h"
+#include "../include/lox/LoxCallable.h"
 
 #include <vector>
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 
 
 std::vector<std::string> split(const std::string &str, const std::string &delimiter) {
@@ -55,6 +57,8 @@ std::string castAnyToString(const std::any &value) {
         return std::any_cast<bool>(value) ? "true" : "false";
     } else if (isNil(value)) {
         return "nil";
+    } else if (auto derivedPtr = std::any_cast<std::shared_ptr<LoxCallable>>(value)) {
+        return derivedPtr->toString();
     } else {
         std::cerr << "Failed to cast type " << value.type().name() << " to string" << std::endl;
         return {};

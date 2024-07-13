@@ -3,11 +3,19 @@
 #include <utility>
 #include "../include/lox/Interpreter.h"
 #include "../include/utils/utils.h"
-#include "../include/lox/RuntimeError.h"
 #include "../include/lox/Lox.h"
+#include "../include/lox/LoxCallable.h"
+#include "../include/lox/LoxFunction.h"
+#include "../include/lox/Clock.h"
 
 using
 enum TokenType;
+
+Interpreter::Interpreter() : environment(std::make_shared<Environment>()), globals(std::make_shared<Environment>()) {
+    environment = globals;
+    globals->define("clock", std::make_optional<std::shared_ptr<Clock>>());
+}
+
 
 std::any Interpreter::visitLiteralExpr(Literal &expr) {
     return expr.value;
@@ -62,34 +70,34 @@ std::any Interpreter::visitBinaryExpr(Binary &expr) {
     std::any right = evaluate(*expr.right);
 
     switch (expr.op.type) {
-        case TokenType::COMMA:
+        case COMMA:
             return right;
-        case TokenType::GREATER:
+        case GREATER:
             checkNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) > std::any_cast<double>(right);
-        case TokenType::GREATER_EQUAL:
+        case GREATER_EQUAL:
             checkNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) >= std::any_cast<double>(right);
-        case TokenType::LESS:
+        case LESS:
             checkNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) < std::any_cast<double>(right);
-        case TokenType::LESS_EQUAL:
+        case LESS_EQUAL:
             checkNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) <= std::any_cast<double>(right);
-        case TokenType::BANG_EQUAL:
+        case BANG_EQUAL:
             return !isEqual(left, right);
-        case TokenType::EQUAL_EQUAL:
+        case EQUAL_EQUAL:
             return isEqual(left, right);
-        case TokenType::MINUS:
+        case MINUS:
             return std::any_cast<double>(left) - std::any_cast<double>(right);
-        case TokenType::PLUS:
+        case PLUS:
             if (isNumber(left) && isNumber(right)) {
                 return std::any_cast<double>(left) + std::any_cast<double>(right);
             } else if (isString(left) || isString(right)) {
                 return castAnyToString(left) + castAnyToString(right);
             }
             throw RuntimeError(expr.op, "Operands must be two numbers or at least one string");
-        case TokenType::SLASH: {
+        case SLASH: {
             checkNumberOperands(expr.op, left, right);
             const auto leftOperand = std::any_cast<double>(left);
             const auto rightOperand = std::any_cast<double>(right);
@@ -98,7 +106,7 @@ std::any Interpreter::visitBinaryExpr(Binary &expr) {
             }
             return leftOperand / rightOperand;
         }
-        case TokenType::STAR:
+        case STAR:
             checkNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) * std::any_cast<double>(right);
         default:
@@ -106,6 +114,42 @@ std::any Interpreter::visitBinaryExpr(Binary &expr) {
     }
 }
 
+std::any Interpreter::visitCallExpr(Call &expr) {
+    std::any callee = evaluate(*expr.callee);
+
+    std::vector<std::any> arguments;
+
+
+    arguments.reserve(expr.arguments.size());
+    for (const std::shared_ptr<Expr> &argument: expr.arguments) {
+        arguments.push_back(evaluate(*argument));
+    }
+
+    std::shared_ptr<LoxCallable> function;
+
+    // This chunk is just to do instanceof
+    if (callee.type() == typeid(std::optional<std::shared_ptr<LoxFunction>>)) {
+        auto optFunc = std::any_cast<std::optional<std::shared_ptr<LoxFunction>>>(callee);
+        if (optFunc.has_value()) {
+            function = std::dynamic_pointer_cast<LoxCallable>(*optFunc);
+        }
+    } else if (callee.type() == typeid(std::shared_ptr<LoxCallable>)) {
+        function = std::any_cast<std::shared_ptr<LoxCallable>>(callee);
+    } else if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
+        auto loxFunction = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
+        function = std::dynamic_pointer_cast<LoxCallable>(loxFunction);
+    } else {
+        throw RuntimeError(expr.paren, "Can only call functions and classes.");
+    }
+
+    if (arguments.size() != function->arity()) {
+        throw RuntimeError(expr.paren, "Expected " + std::to_string(function->arity()) + " arguments but got " +
+                                       std::to_string(arguments.size()));
+    }
+
+    return function->call(*this, arguments);
+
+}
 
 std::any Interpreter::visitTernaryExpr(Ternary &expr) {
     if (expr.op1.type == QUESTION && expr.op2.type == COLON) {
@@ -164,6 +208,14 @@ std::any Interpreter::visitExpressionStmt(Expression &stmt) {
     return nullptr;
 }
 
+std::any Interpreter::visitFunctionStmt(Function &stmt) {
+    const auto &func = std::make_shared<Function>(stmt);
+    std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(func);
+    environment->define(stmt.name.lexeme,
+                        std::make_optional<>(function));
+    return nullptr;
+}
+
 std::any Interpreter::visitIfStmt(If &stmt) {
     if (isTruthy(evaluate(*stmt.condition))) {
         execute(*stmt.thenBranch);
@@ -185,7 +237,7 @@ std::any Interpreter::visitVarStmt(Var &stmt) {
         value = evaluate(*stmt.initializer);
     }
 
-    environment->define(stmt.name.lexeme, value);
+    environment->define(stmt.name.lexeme, std::make_optional<>(value));
     return nullptr;
 }
 
@@ -193,6 +245,7 @@ std::any Interpreter::visitWhileStmt(While &stmt) {
     while (isTruthy(evaluate(*stmt.condition))) {
         execute(*stmt.body);
     }
+    return nullptr;
 }
 
 std::any Interpreter::visitAssignExpr(Assign &expr) {
@@ -206,7 +259,7 @@ std::any Interpreter::visitBlockStmt(Block &stmt) {
     return nullptr;
 }
 
-void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>>& statements,
+void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>> &statements,
                                const std::shared_ptr<Environment> &executionEnvironment) {
     std::shared_ptr<Environment> previous = this->environment;
 

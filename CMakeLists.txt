@@ -35,4 +35,9 @@ add_executable(interpreters
         lox/Stmt.cpp
         lox/Environment.cpp
         include/lox/Environment.h
+        include/lox/LoxCallable.h
+        lox/Clock.cpp
+        include/lox/Clock.h
+        include/lox/LoxFunction.cpp
+        include/lox/LoxFunction.h
 )

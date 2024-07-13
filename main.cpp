@@ -31,7 +31,7 @@ void codegen() {
 int main(int argc, char *argv[]) {
 //    codegen();
 //    testAst();
-    Lox::runFile("/home/ian/interpreters/test/fibonacci.txt");
+    Lox::runFile("/home/ian/interpreters/test/functions.txt");
 //    Lox::main(argc, argv);
     return 0;
 }

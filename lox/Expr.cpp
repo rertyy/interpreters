@@ -15,6 +15,13 @@ std::any Binary::accept(Visitor &visitor) {
     return visitor.visitBinaryExpr(*this);
 }
 
+Call::Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments) : callee(
+        std::move(callee)), paren(std::move(paren)), arguments(std::move(arguments)) {}
+
+std::any Call::accept(Visitor &visitor) {
+    return visitor.visitCallExpr(*this);
+}
+
 Ternary::Ternary(std::shared_ptr<Expr> left, Token op1, std::shared_ptr<Expr> middle, Token op2,
                  std::shared_ptr<Expr> right) : left(std::move(left)), op1(std::move(op1)), middle(std::move(middle)),
                                                 op2(std::move(op2)), right(std::move(right)) {}

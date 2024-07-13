@@ -13,6 +13,13 @@ std::any Expression::accept(Visitor &visitor) {
     return visitor.visitExpressionStmt(*this);
 }
 
+Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body) : name(
+        std::move(name)), params(std::move(params)), body(std::move(body)) {}
+
+std::any Function::accept(Visitor &visitor) {
+    return visitor.visitFunctionStmt(*this);
+}
+
 If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch) : condition(
         std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
 

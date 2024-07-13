@@ -9,7 +9,8 @@
 // Class for evaluating expressions
 class Interpreter : public virtual Expr::Visitor, public virtual Stmt::Visitor {
 public:
-    Interpreter() : environment(std::make_shared<Environment>()) {}
+
+    Interpreter();
 
     // Expression visitors
     std::any visitLiteralExpr(Literal &expr) override;
@@ -22,6 +23,8 @@ public:
 
     std::any visitBinaryExpr(Binary &expr) override;
 
+    std::any visitCallExpr(Call &expr) override;
+
     std::any visitTernaryExpr(Ternary &expr) override;
 
     std::any visitVariableExpr(Variable &expr) override;
@@ -32,6 +35,8 @@ public:
     std::any visitBlockStmt(Block &stmt) override;
 
     std::any visitExpressionStmt(Expression &stmt) override;
+
+    std::any visitFunctionStmt(Function &stmt) override;
 
     std::any visitIfStmt(If &stmt) override;
 
@@ -48,6 +53,11 @@ public:
     void interpret(Expr &expr);
 
     void interpret(const std::vector<std::shared_ptr<Stmt>> &statements);
+
+    std::shared_ptr<Environment> globals;
+
+    void executeBlock(const std::vector<std::shared_ptr<Stmt>> &statements,
+                      const std::shared_ptr<Environment> &executionEnvironment);
 
 private:
 
@@ -71,8 +81,6 @@ private:
 
     void checkNumberOperands(const Token &op, const std::any &left, const std::any &right) const;
 
-    void executeBlock(const std::vector<std::shared_ptr<Stmt>> &statements,
-                      const std::shared_ptr<Environment> &executionEnvironment);
 };
 
 

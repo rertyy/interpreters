@@ -27,24 +27,25 @@
 
 ### Recursive Descent (Parsing into Parse Tree)
 
+See the (pseudo)-BNF in include/Parser.h
+
 * In `Parser.cpp`, start by parsing the lowest precedence operator before recursively parsing into the remaining
   operators.
 * With the BNF grammar, basically one function per grammar rule.
 * Call the lowest precedence first (comma operator, then assignment, then equality, etc.)
+* For loop can be desugared to while loop by doing while, then increment, then body
 
 ### Interpreter (Evaluation)
 
-* Dangling else problem
+* Dangling else problem resolved using most recent if statement
 
 # CPP Notes
 
-Since I primarily did this to learn C++ and I didn't want to just copy-paste code if it's Java, and C++ is similar to
-Java.
-
-* TODO: refactor uses of `std::string` to `std::string_view` to get rid of temporary object copying accordingly
-* TODO: `std::string_view` is a non-owning view of a string, so it's not a drop-in replacement for `std::string`
 * TODO: Refactor `match` and `consume` functions
+* TODO: implement break
+* TODO: do I really need to throw `std::shared_ptr` everywhere?
 * TODO: add utils namespace to `utils` methods
+* TODO: I recall having problems with templates for Visitor and Expr, not sure if it makes sense to be added back
 
 * To build: https://stackoverflow.com/a/7859663
     1. cd build
@@ -62,3 +63,6 @@ Java.
 * Java `instanceof` keyword is done using `std::dynamic_cast` in C++ (`Parser::assignment`)
 * Java generic classes and methods don't seem to translate very well to C++ template specialisation (looking
   specifically at the Visitor pattern)
+* `std::string` and `std::vector` support move semantics, so you can return them by value without worrying about
+  performance
+* Beware of object slicing where `class A : public B {}` and `A a = b` will slice off the `B` part of `b`

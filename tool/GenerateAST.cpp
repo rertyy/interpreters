@@ -17,6 +17,7 @@ void GenerateAST::main(int argc, char **argv) {
     defineAST(codeOutputDir, headerOutputDir, "Expr", {
             "Assign   : Token name, std::shared_ptr<Expr> value",
             "Binary   : std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right",
+            "Call     : std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments",
             "Ternary  : std::shared_ptr<Expr> left, Token op1, std::shared_ptr<Expr> middle, Token op2, std::shared_ptr<Expr> right",
             "Grouping : std::shared_ptr<Expr> expression",
             "Literal  : std::any value",
@@ -27,6 +28,7 @@ void GenerateAST::main(int argc, char **argv) {
     defineAST(codeOutputDir, headerOutputDir, "Stmt", {
             "Block      : std::vector<std::shared_ptr<Stmt>> statements",
             "Expression : std::shared_ptr<Expr> expression",
+            "Function   : Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body",
             "If         : std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch",
             "Print      : std::shared_ptr<Expr> expression",
             "Var        : Token name, std::shared_ptr<Expr> initializer",

@@ -11,6 +11,8 @@ class Assign;
 
 class Binary;
 
+class Call;
+
 class Ternary;
 
 class Grouping;
@@ -37,6 +39,8 @@ public:
     virtual std::any visitAssignExpr(Assign &expr) = 0;
 
     virtual std::any visitBinaryExpr(Binary &expr) = 0;
+
+    virtual std::any visitCallExpr(Call &expr) = 0;
 
     virtual std::any visitTernaryExpr(Ternary &expr) = 0;
 
@@ -69,6 +73,17 @@ public:
     std::shared_ptr<Expr> left;
     Token op;
     std::shared_ptr<Expr> right;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class Call : public Expr {
+public:
+    explicit Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments);
+
+    std::shared_ptr<Expr> callee;
+    Token paren;
+    std::vector<std::shared_ptr<Expr>> arguments;
 
     std::any accept(Visitor &visitor) override;
 };

@@ -22,8 +22,21 @@ enum TokenType;
  *                | forStmt
  *                | ifStmt
  *                | printStmt
+ *                | returnStmt
  *                | whileStmt
- *                | block ;
+ *                | block ;*
+ *
+ * block          → "{" declaration* "}" ;
+ *
+ * declaration    → funDecl
+ *                | varDecl
+ *                | statement ;
+ * varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+ *
+ * funDecl        → "fun" function ;
+ * function       → IDENTIFIER "(" parameters? ")" block ;
+ * parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
+ * arguments      → expression ( "," expression )* ;
  *
  * exprStmt       → expression ";" ;
  * forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
@@ -32,27 +45,26 @@ enum TokenType;
  * ifStmt         → "if" "(" expression ")" statement
  *                   ( "else" statement )? ;
  * printStmt      → "print" expression ";" ;
+ * returnStmt     → "return" expression? ";" ;
  * whileStmt      → "while" "(" expression ")" statement ;
- * block          → "{" declaration* "}" ;
  *
- * expression     → literal
- *                | unary
- *                | binary
- *                | grouping ;
- *
- * expression     → assignment ;
+ * expression     → commaOperator ;
+ * commaOperator  → ternary ( "," ternary )*
+ * ternary        → assignment "?" assignment ":" ternary ;
+ * // Note: ternary is right associative, so a == 1 ? "one" : a == 2 ? "two" : "many" is a == 1 ? "one" : (a == 2 ? "two" : "many")
  * assignment     → IDENTIFIER "=" assignment
  *                | logic_or ;
+ *
  * logic_or       → logic_and ( "or" logic_and )* ;
  * logic_and      → equality ( "and" equality )* ;
  * equality       → comparison ( ( "!=" | "==" ) comparison )* ;
  * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
  * term           → factor ( ( "-" | "+" ) factor )* ;
  * factor         → unary ( ( "/" | "*" ) unary )* ;
- * unary          → ( "!" | "-" ) unary
- *                | primary ;
+ * unary          → ( "!" | "-" ) unary | call;
+ * call           → primary ( "(" arguments? ")" )* ;
  * primary        → NUMBER | STRING | "true" | "false" | "nil"
- *                | "(" expression ")" ;
+ *                | "(" expression ")" | IDENTIFIER ;
  */
 
 // The syntax doesn't care that "and", "or" expressions  short-circuit. That’s a semantic concern.
@@ -114,6 +126,10 @@ private:
 
     std::shared_ptr<Expr> unary();
 
+    std::shared_ptr<Expr> call();
+
+    std::shared_ptr<Expr> finishCall(const std::shared_ptr<Expr> &callee);
+
     std::shared_ptr<Expr> primary();
 
     /**
@@ -143,6 +159,8 @@ private:
     std::shared_ptr<Stmt> ifStatement();
 
     std::shared_ptr<Stmt> expressionStatement();
+
+    std::shared_ptr<Function> function(const std::string &kind);
 
     std::shared_ptr<Expr> assignment();
 

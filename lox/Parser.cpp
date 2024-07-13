@@ -4,6 +4,14 @@
 Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)), current(0) {}
 
 bool Parser::match(const std::vector<TokenType> &types) {
+//    for (const auto &type: types) {
+//        if (check(type)) {
+//            advance();
+//            return true;
+//        }
+//    }
+//    return false;
+
     bool it = std::ranges::any_of(types, [this](const TokenType &type) {
         return (check(type));
     });
@@ -107,7 +115,38 @@ std::shared_ptr<Expr> Parser::unary() {
         std::shared_ptr<Expr> right = unary();
         return std::make_shared<Unary>(op, right);
     }
-    return primary();
+    return call();
+}
+
+std::shared_ptr<Expr> Parser::call() {
+    std::shared_ptr<Expr> expr = primary();
+
+    while (true) {
+        if (match({LEFT_PAREN})) {
+            expr = finishCall(expr);
+        } else {
+            break;
+        }
+    }
+    return expr;
+}
+
+std::shared_ptr<Expr> Parser::finishCall(const std::shared_ptr<Expr> &callee) {
+    std::vector<std::shared_ptr<Expr>> arguments;
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (arguments.size() >= 255) {
+                // Don't throw because parser knows which point it is inside the code
+                error(peek(), "Can't have more than 255 arguments.");
+            }
+            // I use ternary() instead of expression() here to avoid commaOperator()
+            arguments.push_back(ternary());
+        } while (match({COMMA}));
+    }
+
+    Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
+    return std::make_shared<Call>(callee, paren, arguments);
+
 }
 
 std::shared_ptr<Expr> Parser::ternary() {
@@ -258,6 +297,9 @@ std::shared_ptr<Stmt> Parser::forStatement() {
         );
     }
 
+    // first parse the for() statement then parse the block body
+    // initBlock; while (condition) { body; increment; }
+
     // for (;;);
     if (condition == nullptr) {
         condition = std::make_shared<Literal>(true);
@@ -299,8 +341,33 @@ std::shared_ptr<Stmt> Parser::expressionStatement() {
     return std::make_shared<Expression>(expr);
 }
 
+
+// Similar implementation to Parser::finishCall()
+std::shared_ptr<Function> Parser::function(const std::string &kind) {
+    Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+    std::vector<Token> params;
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (params.size() >= 255) {
+                // Don't throw because parser knows which point it is inside the code
+                error(peek(), "Can't have more than 255 parameters");
+            }
+
+            params.emplace_back(consume(IDENTIFIER, "Expect parameter name."));
+        } while (match({COMMA}));
+
+        consume(RIGHT_PAREN, "Expect ')' after parameters.");
+    }
+
+    consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+    std::vector<std::shared_ptr<Stmt>> body = block();
+    return std::make_shared<Function>(name, params, body);
+}
+
 std::shared_ptr<Stmt> Parser::declaration() {
     try {
+        if (match({FUN})) return function("function");
         if (match({VAR})) return varDeclaration();
         return statement();
     } catch (const ParseError &error) {

@@ -24,6 +24,7 @@ public:
 
     std::any visitAssignExpr(Assign &expr) override;
 
+    std::any visitCallExpr(Call &expr) override;
 
     /**
      * @brief Parenthesize the given expressions into Polish notation
@@ -31,6 +32,7 @@ public:
     template<typename... Exprs>
     std::string parenthesize(const std::string &name,
                              Exprs &&... expressions);
+
 };
 
 #endif //INTERPRETERS_ASTPRINTER_H
