@@ -49,7 +49,7 @@ See the (pseudo)-BNF in include/Parser.h
 
 * TODO: Refactor `match` and `consume` functions
 * TODO: make things `const`
-* TODO: make `;;` work
+* TODO: make empty statements`;;` work
 * TODO: do I really need to throw `std::shared_ptr` everywhere instead of `std::unique_ptr`?
 * TODO: add utils namespace to `utils` methods
 * TODO: I recall having problems with templates for Visitor and Expr, not sure if it makes sense to be added back

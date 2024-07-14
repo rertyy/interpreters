@@ -1,3 +1,14 @@
+fun foo(x, y) {
+    return bar(3, 1) + y;
+}
+
+fun bar(x, y) {
+    return x - y;
+}
+
+print foo(5, 7);
+
+
 fun fib(n) {
   print "fib called with " + n;
   if (n <= 1) {

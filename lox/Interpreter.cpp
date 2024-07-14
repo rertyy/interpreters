@@ -125,7 +125,6 @@ std::any Interpreter::visitCallExpr(Call &expr) {
 
     std::vector<std::any> arguments;
 
-
     arguments.reserve(expr.arguments.size());
     for (const std::shared_ptr<Expr> &argument: expr.arguments) {
         arguments.push_back(evaluate(*argument));
@@ -134,12 +133,7 @@ std::any Interpreter::visitCallExpr(Call &expr) {
     std::shared_ptr<LoxCallable> function;
 
     // This chunk is just to do instanceof
-    if (callee.type() == typeid(std::optional<std::shared_ptr<LoxFunction>>)) {
-        auto optFunc = std::any_cast<std::optional<std::shared_ptr<LoxFunction>>>(callee);
-        if (optFunc.has_value()) {
-            function = std::dynamic_pointer_cast<LoxCallable>(*optFunc);
-        }
-    } else if (callee.type() == typeid(std::shared_ptr<LoxCallable>)) {
+    if (callee.type() == typeid(std::shared_ptr<LoxCallable>)) {
         function = std::any_cast<std::shared_ptr<LoxCallable>>(callee);
     } else if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
         auto loxFunction = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
@@ -215,10 +209,12 @@ std::any Interpreter::visitExpressionStmt(Expression &stmt) {
 }
 
 std::any Interpreter::visitFunctionStmt(Function &stmt) {
-    const auto &func = std::make_shared<Function>(stmt);
-    std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(func);
+    std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(
+            std::make_shared<Function>(stmt)
+//            ,environment
+    );
     environment->define(stmt.name.lexeme,
-                        std::make_optional<>(function));
+                        function);
     return nullptr;
 }
 
@@ -246,12 +242,12 @@ std::any Interpreter::visitReturnStmt(Return &expr) {
 }
 
 std::any Interpreter::visitVarStmt(Var &stmt) {
-    std::optional<std::any> value = std::nullopt;
+    std::any value;
     if (stmt.initializer != nullptr) {
         value = evaluate(*stmt.initializer);
     }
 
-    environment->define(stmt.name.lexeme, std::make_optional<>(value));
+    environment->define(stmt.name.lexeme, value);
     return nullptr;
 }
 
@@ -282,7 +278,7 @@ std::any Interpreter::visitContinueStmt(Continue &stmt) {
     if (loopDepth == 0) {
         throw RuntimeError(stmt.keyword, "Cannot use 'continue' outside of a loop");
     }
-    // TODO: This is not possible for for loops atm, hence just throw an error
+    // TODO: This is not possible for `for` loops atm, hence just throw an error
     throw RuntimeError(stmt.keyword, "'continue' is not currently supported.");
 }
 

@@ -65,9 +65,8 @@ public:
     void executeBlock(const std::vector<std::shared_ptr<Stmt>> &statements,
                       const std::shared_ptr<Environment> &executionEnvironment);
 
-private:
-
     std::shared_ptr<Environment> environment;
+private:
 
     int loopDepth = 0;
 

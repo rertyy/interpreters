@@ -8,8 +8,9 @@
 
 class LoxFunction : public LoxCallable {
 public:
-    explicit LoxFunction(const std::shared_ptr<Function> &declaration)
-            : declaration(declaration) {};
+//    LoxFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure);
+
+    explicit LoxFunction(const std::shared_ptr<Function> &declaration);
 
     int arity() override;
 
@@ -20,6 +21,8 @@ public:
 
 private:
     std::shared_ptr<Function> declaration;
+
+//    std::shared_ptr<Environment> closure;
 };
 
 
