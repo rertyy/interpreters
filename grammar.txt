@@ -1,0 +1,59 @@
+
+
+============ GRAMMAR =============
+program        → statement* EOF ;
+
+statement      → exprStmt
+               | forStmt
+               | ifStmt
+               | printStmt
+               | returnStmt
+               | whileStmt
+               | block ;*
+
+block          → "{" declaration* "}" ;
+
+declaration    → funDecl
+               | varDecl
+               | statement ;
+varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+
+
+============ STATEMENTS =============
+exprStmt       → expression ";" ;
+forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+                 expression? ";"
+                 expression? ")" statement ;
+ifStmt         → "if" "(" expression ")" statement
+                  ( "else" statement )? ;
+printStmt      → "print" expression ";" ;
+returnStmt     → "return" expression? ";" ;
+whileStmt      → "while" "(" expression ")" statement ;
+
+============ FUNCTIONS =============
+funDecl        → "fun" function ;
+function       → IDENTIFIER "(" parameters? ")" block ;
+parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
+arguments      → expression ( "," expression )* ;
+
+
+============ EXPRESSIONS =============
+expression     → commaOperator ;
+commaOperator  → ternary ( "," ternary )*
+ternary        → assignment "?" assignment ":" ternary ;
+// Note: ternary is right associative, so a == 1 ? "one" : a == 2 ? "two" : "many" is a == 1 ? "one" : (a == 2 ? "two" : "many")
+
+assignment     → IDENTIFIER "=" assignment
+               | logic_or ;
+logic_or       → logic_and ( "or" logic_and )* ;
+logic_and      → equality ( "and" equality )* ;
+equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+term           → factor ( ( "-" | "+" ) factor )* ;
+factor         → unary ( ( "/" | "*" ) unary )* ;
+unary          → ( "!" | "-" ) unary | call;
+call           → primary ( "(" arguments? ")" )* ;
+primary        → NUMBER | STRING | "true" | "false" | "nil"
+               | "(" expression ")" | IDENTIFIER ;
+
+The syntax doesn't care that "and", "or" expressions  short-circuit. That’s a semantic concern.

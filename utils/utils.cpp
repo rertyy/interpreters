@@ -1,5 +1,6 @@
 #include "../include/utils/utils.h"
 #include "../include/lox/LoxCallable.h"
+#include "../include/lox/LoxFunction.h"
 
 #include <vector>
 #include <string>
@@ -58,6 +59,8 @@ std::string castAnyToString(const std::any &value) {
     } else if (isNil(value)) {
         return "nil";
     } else if (auto derivedPtr = std::any_cast<std::shared_ptr<LoxCallable>>(value)) {
+        return derivedPtr->toString();
+    } else if (auto derivedPtr = std::any_cast<std::shared_ptr<LoxFunction>>(value)) {
         return derivedPtr->toString();
     } else {
         std::cerr << "Failed to cast type " << value.type().name() << " to string" << std::endl;

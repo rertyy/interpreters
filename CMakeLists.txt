@@ -30,7 +30,7 @@ add_executable(interpreters
         include/lox/Parser.h
         lox/Interpreter.cpp
         include/lox/Interpreter.h
-        include/lox/RuntimeError.h
+        include/lox/exceptions/RuntimeError.h
         include/lox/Stmt.h
         lox/Stmt.cpp
         lox/Environment.cpp
@@ -38,6 +38,9 @@ add_executable(interpreters
         include/lox/LoxCallable.h
         lox/Clock.cpp
         include/lox/Clock.h
-        include/lox/LoxFunction.cpp
+        lox/LoxFunction.cpp
         include/lox/LoxFunction.h
+        include/lox/exceptions/ReturnException.h
+        include/lox/exceptions/BreakException.h
+        include/lox/exceptions/ContinueException.h
 )

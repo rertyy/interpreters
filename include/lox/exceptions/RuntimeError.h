@@ -3,7 +3,7 @@
 
 
 #include <stdexcept>
-#include "Token.h"
+#include "../Token.h"
 
 class RuntimeError : public std::runtime_error {
 public:

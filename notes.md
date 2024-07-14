@@ -33,19 +33,29 @@ See the (pseudo)-BNF in include/Parser.h
   operators.
 * With the BNF grammar, basically one function per grammar rule.
 * Call the lowest precedence first (comma operator, then assignment, then equality, etc.)
+* The syntax doesn't care that "and", "or" expressions short-circuit. That’s a semantic concern. (From the book)
 * For loop can be desugared to while loop by doing while, then increment, then body
+* Note to avoid accidentally calling `Parser::commaOperator` for arguments or expressions
 
 ### Interpreter (Evaluation)
 
 * Dangling else problem resolved using most recent if statement
+* `break`, `continue`, `return`: because they are nested, easiest way given a deeply nested recursive parse tree
+  is to throw an exception and catch it within `Interpreter.cpp`. The current implementation of `for` loops desugars
+  the loop into an `initializer; while{body; increment;}` loop. Hence with this current implementation `continue` is not
+  possible for `for` loops because an exception will cut past the `increment` portion of the `for` loop. I think the
+  only way to do it is to have a separate `Stmt::For` class and to not desugar to `while`.
 
-# CPP Notes
 
 * TODO: Refactor `match` and `consume` functions
-* TODO: implement break
-* TODO: do I really need to throw `std::shared_ptr` everywhere?
+* TODO: make things `const`
+* TODO: make `;;` work
+* TODO: do I really need to throw `std::shared_ptr` everywhere instead of `std::unique_ptr`?
 * TODO: add utils namespace to `utils` methods
 * TODO: I recall having problems with templates for Visitor and Expr, not sure if it makes sense to be added back
+* TODO: make functions work... `printHi` works, but not return statements because the environment is somehow shared
+
+# CPP Notes
 
 * To build: https://stackoverflow.com/a/7859663
     1. cd build
@@ -65,4 +75,5 @@ See the (pseudo)-BNF in include/Parser.h
   specifically at the Visitor pattern)
 * `std::string` and `std::vector` support move semantics, so you can return them by value without worrying about
   performance
-* Beware of object slicing where `class A : public B {}` and `A a = b` will slice off the `B` part of `b`
+* Beware of object slicing where `class A : public B {}` and `A a = b` will slice off the `B` part of `b` because of
+  pass-by-value. No issue if using pointers.

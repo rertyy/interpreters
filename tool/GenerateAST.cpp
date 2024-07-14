@@ -31,6 +31,9 @@ void GenerateAST::main(int argc, char **argv) {
             "Function   : Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body",
             "If         : std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch",
             "Print      : std::shared_ptr<Expr> expression",
+            "Break      : Token keyword",
+            "Continue   : Token keyword",
+            "Return     : Token keyword, std::shared_ptr<Expr> value",
             "Var        : Token name, std::shared_ptr<Expr> initializer",
             "While      : std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body",
     });

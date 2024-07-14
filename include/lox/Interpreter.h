@@ -42,9 +42,15 @@ public:
 
     std::any visitPrintStmt(Print &stmt) override;
 
+    std::any visitReturnStmt(Return &stmt) override;
+
     std::any visitVarStmt(Var &stmt) override;
 
     std::any visitWhileStmt(While &stmt) override;
+
+    std::any visitBreakStmt(Break &stmt) override;
+
+    std::any visitContinueStmt(Continue &stmt) override;
 
 
     /**
@@ -62,6 +68,8 @@ public:
 private:
 
     std::shared_ptr<Environment> environment;
+
+    int loopDepth = 0;
 
     // Evaluate an expression
     std::any evaluate(Expr &expr);

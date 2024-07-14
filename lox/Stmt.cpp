@@ -33,6 +33,24 @@ std::any Print::accept(Visitor &visitor) {
     return visitor.visitPrintStmt(*this);
 }
 
+Break::Break(Token keyword) : keyword(std::move(keyword)) {}
+
+std::any Break::accept(Visitor &visitor) {
+    return visitor.visitBreakStmt(*this);
+}
+
+Continue::Continue(Token keyword) : keyword(std::move(keyword)) {}
+
+std::any Continue::accept(Visitor &visitor) {
+    return visitor.visitContinueStmt(*this);
+}
+
+Return::Return(Token keyword, std::shared_ptr<Expr> value) : keyword(std::move(keyword)), value(std::move(value)) {}
+
+std::any Return::accept(Visitor &visitor) {
+    return visitor.visitReturnStmt(*this);
+}
+
 Var::Var(Token name, std::shared_ptr<Expr> initializer) : name(std::move(name)), initializer(std::move(initializer)) {}
 
 std::any Var::accept(Visitor &visitor) {

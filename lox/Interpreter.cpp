@@ -7,13 +7,19 @@
 #include "../include/lox/LoxCallable.h"
 #include "../include/lox/LoxFunction.h"
 #include "../include/lox/Clock.h"
+#include "../include/lox/exceptions/ReturnException.h"
+#include "../include/lox/exceptions/BreakException.h"
+#include "../include/lox/exceptions/ContinueException.h"
 
 using
 enum TokenType;
 
-Interpreter::Interpreter() : environment(std::make_shared<Environment>()), globals(std::make_shared<Environment>()) {
+Interpreter::Interpreter()
+        : environment(std::make_shared<Environment>()), globals(std::make_shared<Environment>()) {
     environment = globals;
-    globals->define("clock", std::make_optional<std::shared_ptr<Clock>>());
+    auto clock = std::make_shared<Clock>();
+    auto clockCallable = std::dynamic_pointer_cast<LoxCallable>(clock);
+    globals->define("clock", clockCallable);
 }
 
 
@@ -231,6 +237,14 @@ std::any Interpreter::visitPrintStmt(Print &stmt) {
     return nullptr;
 }
 
+std::any Interpreter::visitReturnStmt(Return &expr) {
+    std::any value = nullptr;
+    if (expr.value != nullptr) {
+        value = evaluate(*expr.value);
+    }
+    throw ReturnException{value};
+}
+
 std::any Interpreter::visitVarStmt(Var &stmt) {
     std::optional<std::any> value = std::nullopt;
     if (stmt.initializer != nullptr) {
@@ -242,10 +256,34 @@ std::any Interpreter::visitVarStmt(Var &stmt) {
 }
 
 std::any Interpreter::visitWhileStmt(While &stmt) {
+    ++loopDepth;
+
     while (isTruthy(evaluate(*stmt.condition))) {
-        execute(*stmt.body);
+        try {
+            execute(*stmt.body);
+        } catch (const ContinueException &) {
+            continue;
+        } catch (const BreakException &) {
+            break;
+        }
     }
+    --loopDepth;
     return nullptr;
+}
+
+std::any Interpreter::visitBreakStmt(Break &stmt) {
+    if (loopDepth == 0) {
+        throw RuntimeError(stmt.keyword, "Cannot use 'break' outside of a loop");
+    }
+    throw BreakException{};
+}
+
+std::any Interpreter::visitContinueStmt(Continue &stmt) {
+    if (loopDepth == 0) {
+        throw RuntimeError(stmt.keyword, "Cannot use 'continue' outside of a loop");
+    }
+    // TODO: This is not possible for for loops atm, hence just throw an error
+    throw RuntimeError(stmt.keyword, "'continue' is not currently supported.");
 }
 
 std::any Interpreter::visitAssignExpr(Assign &expr) {
@@ -268,6 +306,7 @@ void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>> &stateme
         this->environment = executionEnvironment;
         for (const auto &statement: statements) {
             if (statement == nullptr) {
+                // Handle empty statments i.e. ;;
                 continue;
             }
             execute(*statement);

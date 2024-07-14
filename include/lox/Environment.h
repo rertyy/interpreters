@@ -5,14 +5,14 @@
 #include <any>
 #include <string>
 #include <memory>
-#include "RuntimeError.h"
+#include "exceptions/RuntimeError.h"
 #include <optional>
 
 class Environment {
 
 public:
 
-    Environment() = default;
+    Environment();
 
     explicit Environment(std::shared_ptr<Environment> enclosing);
 
@@ -21,7 +21,7 @@ public:
 
     std::any get(const Token &name) const;
 
-    void define(const std::string &name, const std::optional<std::any> &value);
+    void define(const std::string &name, const std::any &value);
 
     void assign(const Token &name, const std::any &value);
 

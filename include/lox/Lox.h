@@ -3,7 +3,7 @@
 
 #include <string>
 #include "Token.h"
-#include "RuntimeError.h"
+#include "exceptions/RuntimeError.h"
 #include "Interpreter.h"
 
 class Lox {

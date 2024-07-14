@@ -1,7 +1,36 @@
-fun sayHi(first, last) {
-  print "Hi, " + first + " " + last + "!";
+fun fib(n) {
+  print "fib called with " + n;
+  if (n <= 1) {
+    return n;
+  }
+  // print "fib(" + n + ") = fib(" + (n - 2) + ") + fib(" + (n - 1) + ")";
+
+  // return fib(n-2) + fib(n-1);
+
+  print "Before " + n;
+  var one = fib(n-2);
+  print "After n-2: " + n;
+  var two = fib(n-1);
+  print "After n-1: " + n;
+  return one + two;
 }
 
-clock();
+print fib(2);
 
-sayHi("Dear", "Reader");
+// var i = 2;
+// print "Result: fib(" + i + ") = " + fib(i);
+
+/**
+for (var i = 0; i < 3; i = i + 1) {
+  print "i before call: " + i;
+  print "Result: fib(" + i + ") = " + fib(i);
+  print "i after call: " + i;
+}
+*/
+
+
+/*
+For some reason vars dont work in functions
+For some reason fib(n-100) + fib(n-2) has fib(n-100) and fib(n-102)
+*/
+

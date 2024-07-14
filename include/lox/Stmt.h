@@ -17,6 +17,12 @@ class If;
 
 class Print;
 
+class Break;
+
+class Continue;
+
+class Return;
+
 class Var;
 
 class While;
@@ -41,6 +47,12 @@ public:
     virtual std::any visitIfStmt(If &expr) = 0;
 
     virtual std::any visitPrintStmt(Print &expr) = 0;
+
+    virtual std::any visitBreakStmt(Break &expr) = 0;
+
+    virtual std::any visitContinueStmt(Continue &expr) = 0;
+
+    virtual std::any visitReturnStmt(Return &expr) = 0;
 
     virtual std::any visitVarStmt(Var &expr) = 0;
 
@@ -93,6 +105,34 @@ public:
     explicit Print(std::shared_ptr<Expr> expression);
 
     std::shared_ptr<Expr> expression;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class Break : public Stmt {
+public:
+    explicit Break(Token keyword);
+
+    Token keyword;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class Continue : public Stmt {
+public:
+    explicit Continue(Token keyword);
+
+    Token keyword;
+
+    std::any accept(Visitor &visitor) override;
+};
+
+class Return : public Stmt {
+public:
+    explicit Return(Token keyword, std::shared_ptr<Expr> value);
+
+    Token keyword;
+    std::shared_ptr<Expr> value;
 
     std::any accept(Visitor &visitor) override;
 };

@@ -1,15 +1,18 @@
 #include <iostream>
 #include <optional>
+#include <utility>
 #include "../include/lox/Environment.h"
 #include "../include/lox/TokenType.h"
 #include "../include/utils/utils.h"
 
+Environment::Environment() : enclosing(nullptr) {}
 
-Environment::Environment(std::shared_ptr<Environment> enclosing) : enclosing(std::move(enclosing)) {}
+Environment::Environment(std::shared_ptr<Environment> enclosing)
+        : enclosing(std::move(enclosing)) {}
 
 
-void Environment::define(const std::string &name, const std::optional<std::any> &value) {
-    values[name] = value;
+void Environment::define(const std::string &name, const std::any &value) {
+    values[name] = std::make_optional<>(value);
 
 }
 
@@ -19,9 +22,9 @@ std::any Environment::get(const Token &name) const {
         if (valueAt.has_value()) {
             return valueAt.value();
         } else {
+            // I added this!
             throw RuntimeError(name, "Uninitialised variable '" + name.lexeme + "'.");
         }
-
     }
     if (enclosing != nullptr) {
         return enclosing->get(name);

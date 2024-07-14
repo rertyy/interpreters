@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../include/lox/Parser.h"
+#include "../include/lox/exceptions/BreakException.h"
 
 Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)), current(0) {}
 
@@ -208,6 +209,7 @@ void Parser::synchronize() {
         case IF:
         case WHILE:
         case PRINT:
+        case BREAK:
         case RETURN:
             return;
         default:
@@ -246,6 +248,15 @@ std::shared_ptr<Stmt> Parser::statement() {
     }
     if (match({PRINT})) {
         return printStatement();
+    }
+    if (match({BREAK})) {
+        return breakStatement();
+    }
+    if (match({CONTINUE})) {
+        return continueStatement();
+    }
+    if (match({RETURN})) {
+        return returnStatement();
     }
     if (match({WHILE})) {
         return whileStatement();
@@ -287,7 +298,7 @@ std::shared_ptr<Stmt> Parser::forStatement() {
     // statement() includes support for block
     std::shared_ptr<Stmt> body = statement();
 
-    // Make new syntax trees for the next loop
+    // Adding the increment after the body
     if (increment != nullptr) {
         body = std::make_shared<Block>(
                 std::vector<std::shared_ptr<Stmt>>{
@@ -298,7 +309,7 @@ std::shared_ptr<Stmt> Parser::forStatement() {
     }
 
     // first parse the for() statement then parse the block body
-    // initBlock; while (condition) { body; increment; }
+    // initBlock { while (condition) { body; increment; } }
 
     // for (;;);
     if (condition == nullptr) {
@@ -335,6 +346,18 @@ std::shared_ptr<Stmt> Parser::printStatement() {
     return std::make_shared<Print>(value);
 }
 
+std::shared_ptr<Stmt> Parser::returnStatement() {
+    Token keyword = previous();
+    std::shared_ptr<Expr> value = nullptr;
+    if (!check(SEMICOLON)) {
+        value = expression();
+    }
+    // this allows for a return;
+
+    consume(SEMICOLON, "Expect ';' after return value");
+    return std::make_shared<Return>(keyword, value);
+}
+
 std::shared_ptr<Stmt> Parser::expressionStatement() {
     std::shared_ptr<Expr> expr = expression();
     consume(SEMICOLON, "Expect ';' after expression.");
@@ -354,7 +377,7 @@ std::shared_ptr<Function> Parser::function(const std::string &kind) {
                 error(peek(), "Can't have more than 255 parameters");
             }
 
-            params.emplace_back(consume(IDENTIFIER, "Expect parameter name."));
+            params.push_back(consume(IDENTIFIER, "Expect parameter name."));
         } while (match({COMMA}));
 
         consume(RIGHT_PAREN, "Expect ')' after parameters.");
@@ -395,7 +418,18 @@ std::shared_ptr<Stmt> Parser::whileStatement() {
     std::shared_ptr<Stmt> body = statement();
 
     return std::make_shared<While>(condition, body);
+}
 
+std::shared_ptr<Stmt> Parser::breakStatement() {
+    Token keyword = previous();
+    consume(SEMICOLON, "Expect ';' after 'break'.");
+    return std::make_shared<Break>(keyword);
+}
+
+std::shared_ptr<Stmt> Parser::continueStatement() {
+    Token keyword = previous();
+    consume(SEMICOLON, "Expect ';' after 'continue'.");
+    return std::make_shared<Continue>(keyword);
 }
 
 // Because LHS and RHS are both valid expressions, run expressions on both LHS and RHS

@@ -26,7 +26,9 @@ enum class TokenType {
     EOF_TOKEN,
 
     // Three character tokens.
-    QUESTION, COLON
+    QUESTION, COLON,
+
+    BREAK, CONTINUE
 
 };
 
